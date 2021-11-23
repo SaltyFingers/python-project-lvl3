@@ -17,6 +17,10 @@ pytest = "^6.2.5"
 pytest-cov = "^3.0.0"
 requests = "^2.26.0"
 requests-mock = "^1.9.3"
+flake8-noqa = "^1.2.1"
+
+[tool.poetry.scripts]
+page-loader = "page_loader.scripts.page_loader:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
