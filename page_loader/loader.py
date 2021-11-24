@@ -1,25 +1,23 @@
-from pathlib import Path, PurePosixPath
+from pathlib import PurePosixPath
+from urllib.parse import urlparse
+import os
+
+DIR_PATH = os.getcwd()
 
 
-def download(url, path):
-    DIR_PATH = Path.cwd()
-    path_to_file = Path(DIR_PATH, PurePosixPath(path).relative_to('/'),
-                        get_file_name(url))
+def download(url, path=DIR_PATH):
+    path_to_file = os.path.join(DIR_PATH, PurePosixPath(path).relative_to('/'),
+                                get_file_name(url))
     with open(path_to_file, 'w+'):
         pass
     print(path_to_file)
-
     return str(path_to_file)
 
 
 def remove_schema(url):
-    if url.startswith('http'):
-        new_url = url[8:]
-    elif url.startswith('https'):
-        new_url = url[9:]
-    else:
-        new_url = url
-    return new_url
+    parsed_url = urlparse(url)
+    scheme = '%s://' % parsed_url.scheme
+    return parsed_url.geturl().replace(scheme, '', 1)
 
 
 def get_file_name(url):
