@@ -18,6 +18,7 @@ pytest-cov = "^3.0.0"
 requests = "^2.26.0"
 requests-mock = "^1.9.3"
 flake8-noqa = "^1.2.1"
+beautifulsoup4 = "^4.10.0"
 
 [tool.poetry.scripts]
 page-loader = "page_loader.scripts.page_loader:main"
