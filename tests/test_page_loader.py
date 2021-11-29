@@ -8,6 +8,10 @@ def test_download():
     assert download('https://ru.hexlet.io/courses', '/tmp') == expect
 
 
+# def test_download_images():
+#     download()
+
+
 def test_get_file_name():
     expect = 'ru-hexlet-io-courses.html'
     assert get_file_name('https://ru.hexlet.io/courses') == expect
