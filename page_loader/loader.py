@@ -32,15 +32,13 @@ def download(url, path=DIR_PATH):
     raw_response.encoding = 'utf-8'
 
 
-#############
-# ПОСМОТРЕТЬ#
-#############
     with open(path_to_file, 'w+') as file:
         response = BeautifulSoup(raw_response.text, 'html.parser')
         for line in response.find_all('img'):
                 img_name = make_img_name(line.get('src'))
                 with open(os.path.join(files_dir, img_name), 'ab') as image:
-                    image.write(requests.get(line.get('src')).content)
+                    image.write(requests.get(make_correct_img_url(
+                                url, line.get('src'))).content)
                 line['src'] = img_name
         file.write(response.prettify())
     return str(path_to_file)
@@ -52,13 +50,19 @@ def remove_schema(url):
     return parsed_url.geturl().replace(scheme, '', 1)
 
 
-#########
-#ГЛЯНУТЬ# 
-#########
-def check_correct_img_url(url, img_url):
-    parsed_img_url = urlparse(img_url)
-    if not parsed_img_url.scheme:
-        return urljoin(url, img_url)
+def make_correct_img_url(url, img_url):
+    pass
+    # parsed_img_url = urlparse(img_url)
+    # parsed_url = urlparse(url)
+    # if not parsed_img_url.netloc:
+    #     if (parsed_url.netloc.endswith('/') or 
+    #         parsed_img_url.path.startswith('/')):
+    #         new_img_url = ''.join([parsed_url.netloc, parsed_img_url.path])
+    #     else:
+    #         new_img_url = '/'.join([parsed_url.netloc, parsed_img_url.path])
+    # if not parsed_img_url.scheme:
+    #     new_img_url = ''.join([parsed_url.scheme, new_img_url])
+    # return new_img_url
 
 
 def make_name_from_url(url):
