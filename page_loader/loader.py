@@ -5,12 +5,15 @@ from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
 
-from page_loader.changer import (make_correct_url,
+from page_loader.changer import (make_absolute_url,
                                  make_name_from_url)
 
 DIR_PATH = os.getcwd()
 
- 
+link_from_tag = {
+    'img': 'src',
+    'script': 'src',
+    'link': 'href', }
 
 def download(url, path=DIR_PATH):
     if path != DIR_PATH:
@@ -19,66 +22,66 @@ def download(url, path=DIR_PATH):
     else:
         working_dir = path
 
-    names = {"main_dir": ''.join([make_name_from_url(url, is_main=True), '.html']),
-             "files_dir": ''.join([make_name_from_url(url, is_main=True), '_files']), }
+    main_page_name = make_name_from_url(url, is_main=True)
+    names = {"main_dir": ''.join([main_page_name, '.html']),
+             "files_dir": ''.join([main_page_name, '_files']), }
 
-    path_to_file = os.path.join(working_dir, names['main_dir'])
-    files_dir_path = os.path.join(working_dir, names['files_dir'])
+    path_to_main_file = os.path.join(working_dir, names['main_dir'])
+    path_to_files_dir = os.path.join(working_dir, names['files_dir'])
 
-    if not os.path.exists(files_dir_path):
-        os.mkdir(files_dir_path)
+    if not os.path.exists(path_to_files_dir):
+        os.mkdir(path_to_files_dir)
 
     raw_data = requests.get(url)
     raw_data.encoding = 'utf-8'
 
-    with open(path_to_file, 'w+') as file:
-        data = BeautifulSoup(raw_data.text, 'html.parser')
-        
-        # DOWNLOAD IMAGES
-        for line in data.find_all('img'):
-            img_url = line.get('src')
-            img_name = make_name_from_url(img_url)
-            line['src'] = os.path.join(files_dir_path, img_name)
-            save_image(make_correct_url(url, img_url), 
-                       img_name, files_dir_path)
+    with open(path_to_main_file, 'w+') as file:
+        page_data = BeautifulSoup(raw_data.text, 'html.parser')
+        for line in page_data.find_all(['img', 'link', 'script']):
+            main_host = urlparse(url).netloc
+            line_url, tag = get_line_url_and_tag(line)
+            line_url_host = urlparse(line_url).netloc
 
-        main_host = urlparse(url).netloc
-
-        # DOWNLOAD LINKS
-        for line in data.find_all('link'):
-            link_url = line.get('href')
-            link_host = urlparse(link_url).netloc
-            if (link_host == main_host or not link_host) and link_url != url:
-                link_name = make_name_from_url(link_url)
-                path = os.path.join(files_dir_path, link_name)
-                raw_link_data = requests.get(make_correct_url(url, link_url))
-                raw_link_data.encoding = 'utf-8'
-                link_data = BeautifulSoup(raw_link_data.text, 'html.parser')
-                line['href'] = path
-                with open(path, 'w+') as link_file:
-                    link_file.write(link_data.prettify())
-        
-        # DOWNLOAD SCRIPTS
-        for line in data.find_all('script'):
-            if line.get('scr'):
-                script_url = line.get('scr')
-            else:
+            if not line_url or line_url == url or (
+                line_url_host and line_url_host != main_host):
                 continue
-            script_host = urlparse(script_url).netloc
-            if (script_host == main_host or not script_host) and script_url != url:
-                script_name = make_name_from_url(script_url)
-                path = os.path.join(files_dir_path, script_name)
-                raw_script_data = requests.get(make_correct_url(url, script_url))
-                raw_script_data.encoding = 'utf-8'
-                script_data = BeautifulSoup(raw_script_data.text, 'html.parser')
-                line['scr'] = path
-                with open(path, 'w+') as script_file:
-                    script_file.write(script_data.prettify())
 
-        file.write(data.prettify())
-    return str(path_to_file)
+            file_name = make_name_from_url(line_url)
+            file_path = os.path.join(path_to_files_dir, file_name)
+            absolute_url = make_absolute_url(url, line_url)
+            line_data = get_line_data(absolute_url, tag)
+            flag = 'ab' if tag == 'img' else 'w+'
 
-def save_image(img_url, img_name, files_dir_path):
-    path_to_image = os.path.join(files_dir_path, img_name)
-    with open(path_to_image, 'ab') as image:
-        image.write(requests.get(img_url).content)
+            with open(file_path, flag) as inner_file:
+                inner_file.write(line_data)
+
+            line[link_from_tag[tag]] = file_path 
+
+        file.write(page_data.prettify())
+    return str(path_to_main_file)
+
+
+def save_image(path, data):
+    with open(path, 'ab') as image:
+        image.write(data.content)
+
+
+def get_line_url_and_tag(line):
+    print(line.name)
+    if line.name == 'img':
+        return line.get('scr'), line.name
+    elif line.name == 'link':
+        return line.get('href'), line.name
+    elif line.name == 'script' and line.get('scr'):
+        return line.get('scr'), line.name
+    else:
+        return None, None
+
+
+def get_line_data(obj_url, tag):
+    if tag == 'img':
+        return requests.get(obj_url).content
+    else:
+        raw_line_data = requests.get(obj_url)
+        raw_line_data.encoding = 'utf-8'
+        return BeautifulSoup(raw_line_data.text, 'html.parser').prettify()

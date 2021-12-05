@@ -8,7 +8,7 @@ def remove_schema(url):
     return parsed_url.geturl().replace(scheme, '', 1)
 
 
-def make_correct_url(main_url, url):
+def make_absolute_url(main_url, url):
     parsed_url = urlparse(url)
     parsed_main_url = urlparse(main_url)
     if not parsed_url.netloc and not parsed_url.scheme:
@@ -40,8 +40,6 @@ def make_name_from_url(url, is_main=False):
             name.append('-')
         else:
             name.append(s)
-    if is_main:
-        name.append(f'_{suffix[1:]}')
-    else:
+    if not is_main:
         name.append(suffix)
     return ''.join(name)
