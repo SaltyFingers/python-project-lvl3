@@ -21,7 +21,6 @@ def download(url, path=DIR_PATH):
                                    PurePosixPath(path).relative_to('/'))
     else:
         working_dir = path
-
     main_page_name = make_name_from_url(url, is_main=True)
     names = {"main_dir": ''.join([main_page_name, '.html']),
              "files_dir": ''.join([main_page_name, '_files']), }
@@ -51,23 +50,21 @@ def download(url, path=DIR_PATH):
             absolute_url = make_absolute_url(url, line_url)
             line_data = get_line_data(absolute_url, tag)
             flag = 'ab' if tag == 'img' else 'w+'
-
-            with open(file_path, flag) as inner_file:
-                inner_file.write(line_data)
-
+            save_file(file_path, flag, line_data)
+            # with open(file_path, flag) as inner_file:
+            #     inner_file.write(line_data)
             line[link_from_tag[tag]] = file_path 
 
         file.write(page_data.prettify())
     return str(path_to_main_file)
 
 
-def save_image(path, data):
-    with open(path, 'ab') as image:
-        image.write(data.content)
+def save_file(path, flag, data):
+    with open(path, flag) as inner_file:
+        inner_file.write(data)
 
 
 def get_line_url_and_tag(line):
-    print(line.name)
     if line.name == 'img':
         return line.get('scr'), line.name
     elif line.name == 'link':

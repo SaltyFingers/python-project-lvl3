@@ -7,14 +7,21 @@ def remove_schema(url):
     scheme = '%s://' % parsed_url.scheme
     return parsed_url.geturl().replace(scheme, '', 1)
 
-
+# ГЛЯНУТЬ, ЧЁТ НЕ ТО
 def make_absolute_url(main_url, url):
     parsed_url = urlparse(url)
     parsed_main_url = urlparse(main_url)
     if not parsed_url.netloc and not parsed_url.scheme:
         return urljoin(main_url, url)
     elif not parsed_url.scheme:
-        return parsed_url.geturl()._replace(scheme=parsed_main_url.scheme)
+        return parsed_url._replace(scheme=parsed_main_url.scheme).geturl()
+    elif ((parsed_url.path and parsed_main_url.path) and
+          (parsed_url.path != parsed_main_url.path)):
+        full_path = urljoin(parsed_main_url.path, parsed_url.path)
+        print(full_path)
+        parsed_main_url._replace(path=full_path)
+        print(parsed_url.path)
+        return parsed_url.geturl()
     else:
         return url
 
