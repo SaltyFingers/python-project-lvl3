@@ -51,10 +51,7 @@ def download(url, path=DIR_PATH):
             line_data = get_line_data(absolute_url, tag)
             flag = 'ab' if tag == 'img' else 'w+'
             save_file(file_path, flag, line_data)
-            # with open(file_path, flag) as inner_file:
-            #     inner_file.write(line_data)
-            line[link_from_tag[tag]] = file_path 
-
+            line = change_url(line, tag, file_path)
         file.write(page_data.prettify())
     return str(path_to_main_file)
 
@@ -62,6 +59,11 @@ def download(url, path=DIR_PATH):
 def save_file(path, flag, data):
     with open(path, flag) as inner_file:
         inner_file.write(data)
+
+
+def change_url(line, tag, file_path):
+    line[link_from_tag[tag]] = file_path
+    return line
 
 
 def get_line_url_and_tag(line):
