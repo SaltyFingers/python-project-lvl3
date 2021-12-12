@@ -122,6 +122,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "logger"
+version = "1.4"
+description = "Python logging helper"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "mccabe"
 version = "0.6.1"
 description = "McCabe checker, plugin for flake8"
@@ -321,7 +329,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "6e28a3bbd090fae5b6d8ee543997542be6b9722b3c1048f59d1ada1cae27e376"
+content-hash = "8bce72ed4b0515b1e05264794a56e2749efde718b3ada694f515a19ea00c17bd"
 
 [metadata.files]
 atomicwrites = [
@@ -411,6 +419,9 @@ idna = [
 iniconfig = [
     {file = "iniconfig-1.1.1-py2.py3-none-any.whl", hash = "sha256:011e24c64b7f47f6ebd835bb12a743f2fbe9a26d4cecaa7f53bc4f35ee9da8b3"},
     {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
+]
+logger = [
+    {file = "logger-1.4.tar.gz", hash = "sha256:4ecac57133c6376fa215f0fe6b4dc4d60e4d1ad8be005cab4e8a702df682f8b3"},
 ]
 mccabe = [
     {file = "mccabe-0.6.1-py2.py3-none-any.whl", hash = "sha256:ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42"},

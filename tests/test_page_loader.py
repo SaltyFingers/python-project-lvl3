@@ -28,6 +28,8 @@ def test_make_name_from_url():
 def test_make_absolute_url():
     assert make_absolute_url('https://super-site.com/files',
                              'https://super-site.com/files/images/img.jpeg') == 'https://super-site.com/files/images/img.jpeg'
+    assert make_absolute_url('https://super-site.com/files',
+                             'files/images/img.jpeg') == 'https://super-site.com/files/images/img.jpeg'
 
 
 def test_change_url():

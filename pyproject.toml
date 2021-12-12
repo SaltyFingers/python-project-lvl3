@@ -20,6 +20,7 @@ requests = "^2.26.0"
 requests-mock = "^1.9.3"
 flake8-noqa = "^1.2.1"
 beautifulsoup4 = "^4.10.0"
+logger = "^1.4"
 
 [tool.poetry.scripts]
 page-loader = "page_loader.scripts.page_loader:main"
