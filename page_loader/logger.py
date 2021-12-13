@@ -1,7 +1,7 @@
 import logging
 
 
-FORMAT = ('%(levelname)s %(message)s')
+FORMAT = ('|%(levelname)s| %(message)s')
 
 
 def get_stream_handdler():

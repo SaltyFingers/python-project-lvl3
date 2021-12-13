@@ -16,6 +16,7 @@ logger = get_logger(__name__)
 
 
 def download(url, path=DIR_PATH):
+
     if path != DIR_PATH:
         working_dir = os.path.join(DIR_PATH,
                                    PurePosixPath(path).relative_to('/'))
@@ -49,7 +50,8 @@ def download(url, path=DIR_PATH):
     raw_data = requests.get(url)
     raw_data.encoding = 'utf-8'
     page_data = BeautifulSoup(raw_data.text, 'html.parser')
-    logger.info('Starting download inner resources')
+    logger.info('Start downloading inner resources')
+    
     for line in page_data.find_all(['img', 'link', 'script']):
         main_host = urlparse(url).netloc
         line_url, tag = get_line_url_and_tag(line)
@@ -68,9 +70,8 @@ def download(url, path=DIR_PATH):
         flag = 'ab' if tag == 'img' else 'w+'
         save_file(file_path, flag, line_data)
         line = change_url(line, tag, file_path)
-
-        logger.info(f'File {file_path} successfully downloaded!')
+    
     logger.info(f'Saving {path_to_main_file}!')
     save_file(path_to_main_file, 'w+', page_data.prettify())
-    logger.info(f'File {path_to_main_file} successfully downloaded!')
+    logger.info(f'{url} successfully downloaded!')
     return str(path_to_main_file)
