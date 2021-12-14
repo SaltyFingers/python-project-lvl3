@@ -4,44 +4,41 @@ from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
+import sys
 
 from page_loader.manager import get_line_data, get_line_url_and_tag, save_file
 from page_loader.changer import (change_url, make_absolute_url,
                                  make_name_from_url)
 from page_loader.logger import get_logger
 
-DIR_PATH = os.getcwd()
+ROOT_DIR_PATH = os.getcwd()
 
 logger = get_logger(__name__)
 
 
-def download(url, path=DIR_PATH):
+def download(url, path=ROOT_DIR_PATH):
 
-    if path != DIR_PATH:
-        working_dir = os.path.join(DIR_PATH,
-                                   PurePosixPath(path).relative_to('/'))
-        if not os.path.exists(working_dir):
-            logger.error(f'Directory {working_dir} does not exist!')
-            raise NameError('Directory does not exist!')
-    else:
-        working_dir = path
+    if not os.path.exists(path):
+        logger.error(f'Directory {path} does not exist!')
+        sys.exit('Directory does not exist! Work stopped!')
+        
 
-    logger.info(f'Start downloading {url} to {working_dir}')
+    logger.info(f'Start downloading {url} to {path}')
 
     main_page_name = make_name_from_url(url, is_main=True)
     names = {"main_dir": ''.join([main_page_name, '.html']),
              "files_dir": ''.join([main_page_name, '_files']), }
 
-    path_to_main_file = os.path.join(working_dir, names['main_dir'])
-    path_to_files_dir = os.path.join(working_dir, names['files_dir'])
+    path_to_main_file = os.path.join(path, names['main_dir'])
+    path_to_files_dir = os.path.join(path, names['files_dir'])
 
     logger.info('Creating directory for files')
     if not os.path.exists(path_to_files_dir):
         try:
             os.mkdir(path_to_files_dir)
         except OSError as err:
-            logger.critical(err)
-            raise OSError()
+            logger.error(err)
+            sys.exit('Can\'t create directory for files! Work stopped!')
         logger.info(f'Directory {path_to_files_dir} successfully created!')
     else:
         logger.warning(f'Directory {path_to_files_dir} '

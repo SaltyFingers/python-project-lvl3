@@ -1,6 +1,7 @@
 import argparse
 import os
 import pathlib
+import sys
 
 import requests
 from requests.exceptions import HTTPError
@@ -18,12 +19,19 @@ def main():
     parser.add_argument('path', type=pathlib.Path, default=os.getcwd())
     args = parser.parse_args()
 
+    if not args.url:
+        logger.error('Missed url!')
+        raise NameError('Wrong input arguments!')
+
     try:
-        requests.get(args.url).raise_for_status()
+        response = requests.get(args.url)
+        response.raise_for_status()
     except HTTPError as http_error:
-        logger.error(f'HTTP error occurred: {http_error}! Work stopped!')
+        logger.error(f'HTTP error occurred: {http_error}!')
+        sys.exit('HTTP error occurred!')
     except Exception as error:
-        logger.error(f'Error occured: {error}! Work stopped!')
+        logger.error(f'Error occured: {error}!')
+        sys.exit('Error occured!')
     else:
         logger.info('Got response! Continue!')
         download(args.url, args.path)

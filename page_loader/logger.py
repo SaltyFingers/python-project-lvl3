@@ -1,10 +1,9 @@
 import logging
 
-
 FORMAT = ('|%(levelname)s| %(message)s')
 
 
-def get_stream_handdler():
+def get_stream_handler():
     stream_handler = logging.StreamHandler()
     stream_handler.setLevel(logging.INFO)
     stream_handler.setFormatter(logging.Formatter(FORMAT))
@@ -14,5 +13,5 @@ def get_stream_handdler():
 def get_logger(name):
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
-    logger.addHandler(get_stream_handdler())
+    logger.addHandler(get_stream_handler())
     return logger
