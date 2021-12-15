@@ -1,7 +1,6 @@
 import pathlib
 from urllib.parse import urlparse, urlsplit, urlunsplit
 
-
 link_from_tag = {
     'img': 'src',
     'script': 'src',

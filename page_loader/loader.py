@@ -15,10 +15,9 @@ logger = get_logger(__name__)
 
 
 def download(url, path=ROOT_DIR_PATH):
-
     if not os.path.exists(path):
-        logger.error(f'Directory {path} does not exist!')
-        sys.exit('Directory does not exist! Work stopped!')
+        logger.error(f'Output directory {path} does not exist!')
+        sys.exit('Output directory does not exist! Work stopped!')
 
     logger.info(f'Start downloading {url} to {path}')
 
