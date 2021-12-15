@@ -41,6 +41,6 @@ jobs:
           make install
     - uses: paambaati/codeclimate-action@v2.7.5
       env:
-        CC_TEST_REPORTER_ID: 3b7311b4764439f7b38abe25f51ca5c06f97831aee09fd0cdad802cac7fefb02
+        CC_TEST_REPORTER_ID: e7f605d1827f5f53284de69daf175ab310d6e5b47f2a6f0d20f49f616d771352
       with:
         coverageCommand: make test-coverage
