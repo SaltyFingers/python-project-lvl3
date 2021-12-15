@@ -12,7 +12,6 @@ from page_loader.changer import (change_url, make_absolute_url,
 from page_loader.logger import get_logger
 
 ROOT_DIR_PATH = os.getcwd()
-
 logger = get_logger(__name__)
 
 
@@ -41,14 +40,14 @@ def download(url, path=ROOT_DIR_PATH):
             sys.exit('Can\'t create directory for files! Work stopped!')
         logger.info(f'Directory {path_to_files_dir} successfully created!')
     else:
-        logger.warning(f'Directory {path_to_files_dir} '
+        logger.info(f'Directory {path_to_files_dir} '
                        f'has already exists! Continue!')
 
     raw_data = requests.get(url)
     raw_data.encoding = 'utf-8'
     page_data = BeautifulSoup(raw_data.text, 'html.parser')
     logger.info('Start downloading inner resources')
-    
+
     for line in page_data.find_all(['img', 'link', 'script']):
         main_host = urlparse(url).netloc
         line_url, tag = get_line_url_and_tag(line)
@@ -67,7 +66,7 @@ def download(url, path=ROOT_DIR_PATH):
         flag = 'ab' if tag == 'img' else 'w+'
         save_file(file_path, flag, line_data)
         line = change_url(line, tag, file_path)
-    
+
     logger.info(f'Saving {path_to_main_file}!')
     save_file(path_to_main_file, 'w+', page_data.prettify())
     logger.info(f'{url} successfully downloaded!')
