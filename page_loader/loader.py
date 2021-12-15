@@ -1,15 +1,14 @@
 import os
-from pathlib import PurePosixPath
+import sys
 from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
-import sys
 
-from page_loader.manager import get_line_data, get_line_url_and_tag, save_file
 from page_loader.changer import (change_url, make_absolute_url,
                                  make_name_from_url)
 from page_loader.logger import get_logger
+from page_loader.manager import get_line_data, get_line_url_and_tag, save_file
 
 ROOT_DIR_PATH = os.getcwd()
 logger = get_logger(__name__)
@@ -20,7 +19,6 @@ def download(url, path=ROOT_DIR_PATH):
     if not os.path.exists(path):
         logger.error(f'Directory {path} does not exist!')
         sys.exit('Directory does not exist! Work stopped!')
-        
 
     logger.info(f'Start downloading {url} to {path}')
 
@@ -41,7 +39,7 @@ def download(url, path=ROOT_DIR_PATH):
         logger.info(f'Directory {path_to_files_dir} successfully created!')
     else:
         logger.info(f'Directory {path_to_files_dir} '
-                       f'has already exists! Continue!')
+                    f'has already exists! Continue!')
 
     raw_data = requests.get(url)
     raw_data.encoding = 'utf-8'

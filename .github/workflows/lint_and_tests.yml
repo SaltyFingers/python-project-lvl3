@@ -22,12 +22,12 @@ jobs:
         run: |
           pip install poetry
           make install
-      - name: Run linter and tests
+      - name: Run linter
         run: |
           make lint
   coverage:
     needs: [ build ]
-    name: coverage
+    name: Run tests and coverage
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
