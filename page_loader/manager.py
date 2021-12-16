@@ -13,7 +13,8 @@ def save_file(path, flag, data):
     try:
         file = open(path, flag)
     except OSError as error:
-        logger.error(f'Error occured: {error}! Work stopped!')
+        logger.error(f'Error occured: {error}!')
+        sys.exit('An error occured! Cat\'t save file! Work stopped!')
     else:
         file.write(data)
         file.close()
@@ -29,6 +30,13 @@ def get_line_url_and_tag(line):
         return line.get('src'), line.name
     else:
         return None, None
+
+
+def get_page_data(url):
+    raw_data = requests.get(url)
+    raw_data.encoding = 'utf-8'
+    page_data = BeautifulSoup(raw_data.text, 'html.parser')
+    return page_data
 
 
 def get_line_data(obj_url, tag):
@@ -48,3 +56,9 @@ def get_line_data(obj_url, tag):
     else:
         response.encoding = 'utf-8'
         return BeautifulSoup(response.text, 'html.parser').prettify()
+
+
+def create_dir_for_files():
+    pass
+
+
