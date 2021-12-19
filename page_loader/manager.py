@@ -18,8 +18,6 @@ def save_file(path, flag, data):
     else:
         file.write(data)
         file.close()
-        logger.info('File successfully downloaded!')
-
 
 def get_line_url_and_tag(line):
     if line.name == 'img':
