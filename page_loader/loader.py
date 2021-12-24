@@ -1,10 +1,10 @@
 import os
 import sys
 from urllib.parse import urlparse
-# import requests
-# from bs4 import BeautifulSoup
-from yaspin import yaspin
+
 from colorama import Fore
+from yaspin import yaspin
+
 from page_loader.changer import (change_url, make_absolute_url,
                                  make_name_from_url)
 from page_loader.logger import get_logger
@@ -19,14 +19,14 @@ def download(url, path=ROOT_DIR_PATH):
     if not os.path.exists(path):
         logger.error(f'Output directory {path} does not exist!')
         sys.exit('Output directory does not exist!')
-    
+
     logger.info(f'Start downloading {url} to {path}')
     main_page_name = make_name_from_url(url, is_main=True)
     path_to_main_file = os.path.join(path, main_page_name + '.html')
     path_to_files_dir = os.path.join(path, main_page_name + '_files')
     page_data = get_page_data(url)
     resources = page_data.find_all(['img', 'link', 'script'])
-    if is_neccesary_to_create_files_dir(url, resources):
+    if is_necessary_to_create_files_dir(url, resources):
         try:
             os.mkdir(path_to_files_dir)
         except PermissionError as error:
@@ -66,10 +66,14 @@ def download_inner_resource_and_get_path(url, line_url,
     spinner.ok(Fore.GREEN + 'Downloaded: ')
     return file_path
 
-def is_neccesary_to_create_files_dir(url, resources):
+
+def is_necessary_to_create_files_dir(url, resources):
+    is_iner_res_bool_list = []
     for line in resources:
         line_url= get_line_url_and_tag(line)[1]
-        return any(is_proper_to_download(url, line_url))
+        is_iner_res_bool_list.append(is_proper_to_download(url, line_url))
+    return any(is_iner_res_bool_list)
+
 
 def is_proper_to_download(url, line_url):
     main_host = urlparse(url).netloc
