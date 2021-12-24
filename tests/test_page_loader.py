@@ -26,6 +26,7 @@ def test_save_file():
 def test_download():
     with tempfile.TemporaryDirectory() as tmp_dir:
         url = 'https://page-loader.hexlet.repl.co/'
+        # os.mkdir(os.path.join(tmp_dir, 'page-loader-hexlet-repl_files'))
         download(url, tmp_dir)
         html_path = os.path.join(tmp_dir, 'page-loader-hexlet-repl.html')
         assert os.path.exists(html_path)
@@ -57,7 +58,7 @@ def test_wrong_dir():
     try:
         download('https://page-loader.hexlet.repl.co/', '/not-exist/downloads')
     except SystemExit as e:
-        assert str(e) == 'Output directory does not exist! Work stopped!'
+        assert str(e) == 'Output directory does not exist!'
 
 
 def test_make_name_from_url():

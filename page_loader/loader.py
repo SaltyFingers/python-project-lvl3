@@ -18,15 +18,23 @@ logger = get_logger(__name__)
 def download(url, path=ROOT_DIR_PATH):
     if not os.path.exists(path):
         logger.error(f'Output directory {path} does not exist!')
-        sys.exit('Output directory does not exist!!')
+        sys.exit('Output directory does not exist!')
     
     logger.info(f'Start downloading {url} to {path}')
     main_page_name = make_name_from_url(url, is_main=True)
     path_to_main_file = os.path.join(path, main_page_name + '.html')
     path_to_files_dir = os.path.join(path, main_page_name + '_files')
     page_data = get_page_data(url)
+    resources = page_data.find_all(['img', 'link', 'script'])
+    if is_neccesary_to_create_files_dir(url, resources):
+        try:
+            os.mkdir(path_to_files_dir)
+        except PermissionError as error:
+            logger.error(f'Permission error: {error}')
+            sys.exit('You don\'t have permission!')
+
     logger.info('Start downloading inner resources')
-    for line in page_data.find_all(['img', 'link', 'script']):
+    for line in resources:
         line_url, tag = get_line_url_and_tag(line)
         if not is_proper_to_download(url, line_url):
             continue
@@ -58,6 +66,10 @@ def download_inner_resource_and_get_path(url, line_url,
     spinner.ok(Fore.GREEN + 'Downloaded: ')
     return file_path
 
+def is_neccesary_to_create_files_dir(url, resources):
+    for line in resources:
+        line_url= get_line_url_and_tag(line)[1]
+        return any(is_proper_to_download(url, line_url))
 
 def is_proper_to_download(url, line_url):
     main_host = urlparse(url).netloc
