@@ -1,5 +1,5 @@
 import sys
-
+import os
 import requests
 from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
@@ -14,7 +14,7 @@ def save_file(path, flag, data):
         file = open(path, flag)
     except OSError as error:
         logger.error(f'Error occured: {error}!')
-        sys.exit('An error occured! Cat\'t save file! Work stopped!')
+        sys.exit('An error occured! Cat\'t save file!')
     else:
         file.write(data)
         file.close()
