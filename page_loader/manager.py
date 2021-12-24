@@ -1,5 +1,4 @@
 import sys
-import os
 import requests
 from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
@@ -18,6 +17,7 @@ def save_file(path, flag, data):
     else:
         file.write(data)
         file.close()
+
 
 def get_line_url_and_tag(line):
     if line.name == 'img':
@@ -54,9 +54,3 @@ def get_line_data(obj_url, tag):
     else:
         response.encoding = 'utf-8'
         return BeautifulSoup(response.text, 'html.parser').prettify()
-
-
-def create_dir_for_files():
-    pass
-
-

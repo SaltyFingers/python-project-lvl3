@@ -39,8 +39,8 @@ def download(url, path=ROOT_DIR_PATH):
         if not is_proper_to_download(url, line_url):
             continue
         file_path = download_inner_resource_and_get_path(url, line_url,
-                                                            path_to_files_dir, 
-                                                            tag)
+                                                         path_to_files_dir,
+                                                         tag)
         line = change_url(line, tag, file_path)
     logger.info(f'Saving {path_to_main_file}!')
     save_file(path_to_main_file, 'w+', page_data.prettify())
@@ -70,7 +70,7 @@ def download_inner_resource_and_get_path(url, line_url,
 def is_necessary_to_create_files_dir(url, resources):
     is_iner_res_bool_list = []
     for line in resources:
-        line_url= get_line_url_and_tag(line)[1]
+        line_url = get_line_url_and_tag(line)[1]
         is_iner_res_bool_list.append(is_proper_to_download(url, line_url))
     return any(is_iner_res_bool_list)
 
@@ -79,4 +79,4 @@ def is_proper_to_download(url, line_url):
     main_host = urlparse(url).netloc
     line_url_host = urlparse(line_url).netloc
     return (line_url or line_url != url or (
-                line_url_host and line_url_host == main_host))
+            line_url_host and line_url_host == main_host))
