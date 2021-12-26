@@ -31,26 +31,35 @@ def get_line_url_and_tag(line):
 
 
 def get_page_data(url):
-    raw_data = requests.get(url)
-    raw_data.encoding = 'utf-8'
-    page_data = BeautifulSoup(raw_data.text, 'html.parser')
+    data = requests.get(url)
+    response = data.raise_for_status()
+    if response != 200:
+        logger.error(f'Response error occured: code {response}')
+        sys.exit('Response error occured! Work stopped!')
+    data.encoding = 'utf-8'
+    page_data = BeautifulSoup(data.text, 'html.parser')
     return page_data
 
 
 def get_line_data(obj_url, tag):
-    try:
-        response = requests.get(obj_url)
-        response.raise_for_status()
-    except HTTPError as http_error:
-        logger.error(f'HTTP error occurred with inner resource: '
-                     f'{http_error}! Work stopped!')
-        sys.exit('HTTP error occurred with inner resource!')
-    except Exception as error:
-        logger.error(f'Error occured with inner resource: '
-                     f'{error}! Work stopped!')
-        sys.exit('Error occurred with inner resource!')
+    # try:
+    #     response = requests.get(obj_url)
+    #     response.raise_for_status()
+    # except HTTPError as http_error:
+    #     logger.error(f'HTTP error occurred with inner resource: '
+    #                  f'{http_error}! Work stopped!')
+    #     sys.exit('HTTP error occurred with inner resource!')
+    # except Exception as error:
+    #     logger.error(f'Error occured with inner resource: '
+    #                  f'{error}! Work stopped!')
+    #     sys.exit('Error occurred with inner resource!')
+    data = requests.get(obj_url)
+    response = data.raise_for_status()
+    if response != 200:
+        logger.error(f'Resource response error occured: code {response}')
+        sys.exit('Resource response error occured! Work stopped!')
     if tag == 'img':
-        return response.content
+        return data.content
     else:
-        response.encoding = 'utf-8'
-        return BeautifulSoup(response.text, 'html.parser').prettify()
+        data.encoding = 'utf-8'
+        return BeautifulSoup(data.text, 'html.parser').prettify()

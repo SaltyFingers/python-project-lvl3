@@ -26,22 +26,22 @@ def download(url, path=ROOT_DIR_PATH):
     path_to_files_dir = os.path.join(path, main_page_name + '_files')
     page_data = get_page_data(url)
     resources = page_data.find_all(['img', 'link', 'script'])
-    if is_necessary_to_create_files_dir(url, resources):
+    if is_any_resources(url, resources):
         try:
             os.mkdir(path_to_files_dir)
         except PermissionError as error:
             logger.error(f'Permission error: {error}')
             sys.exit('You don\'t have permission!')
 
-    logger.info('Start downloading inner resources')
-    for line in resources:
-        line_url, tag = get_line_url_and_tag(line)
-        if not is_proper_to_download(url, line_url):
-            continue
-        file_path = download_inner_resource_and_get_path(url, line_url,
-                                                         path_to_files_dir,
-                                                         tag)
-        line = change_url(line, tag, file_path)
+        logger.info(f'Start downloading {len(resources)} inner resources')
+        for line in resources:
+            line_url, tag = get_line_url_and_tag(line)
+            if not is_proper_to_download(url, line_url):
+                continue
+            file_path = download_inner_resource_and_get_path(url, line_url,
+                                                            path_to_files_dir,
+                                                            tag)
+            line = change_url(line, tag, file_path)
     logger.info(f'Saving {path_to_main_file}!')
     save_file(path_to_main_file, 'w+', page_data.prettify())
     logger.info(f'{url} successfully downloaded!')
@@ -67,7 +67,7 @@ def download_inner_resource_and_get_path(url, line_url,
     return file_path
 
 
-def is_necessary_to_create_files_dir(url, resources):
+def is_any_resources(url, resources):
     is_iner_res_bool_list = []
     for line in resources:
         line_url = get_line_url_and_tag(line)[1]
@@ -80,3 +80,4 @@ def is_proper_to_download(url, line_url):
     line_url_host = urlparse(line_url).netloc
     return (line_url or line_url != url or (
             line_url_host and line_url_host == main_host))
+
