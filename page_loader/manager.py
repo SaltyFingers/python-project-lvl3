@@ -77,12 +77,10 @@ def get_line_data(obj_url, tag):
 
 
 def create_dir_for_files(path):
-        try:
-            os.mkdir(path)
-        except PermissionError as error:
-            logger.error(f'Permission error: {error}')
-            sys.exit('You don\'t have permission!')
-        except FileExistsError:
-            pass
-        
-        
+    try:
+        os.mkdir(path)
+    except PermissionError as error:
+        logger.error(f'Permission error: {error}')
+        sys.exit('You don\'t have permission!')
+    except FileExistsError:
+        pass

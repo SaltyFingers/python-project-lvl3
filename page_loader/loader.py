@@ -8,8 +8,9 @@ from yaspin import yaspin
 from page_loader.changer import (change_url, make_absolute_url,
                                  make_name_from_url)
 from page_loader.logger import get_logger
-from page_loader.manager import (get_line_data, get_line_url_and_tag,
-                                 get_page_data, save_file, create_dir_for_files)
+from page_loader.manager import (create_dir_for_files, get_line_data,
+                                 get_line_url_and_tag, get_page_data,
+                                 save_file)
 
 ROOT_DIR_PATH = os.getcwd()
 logger = get_logger(__name__)
@@ -28,17 +29,17 @@ def download(url, path=ROOT_DIR_PATH):
     page_data = get_page_data(url)
     resources = page_data.find_all(['img', 'link', 'script'])
     if is_any_resources(url, resources):
-        
+
         create_dir_for_files(path_to_files_dir)
         logger.info(f'Start downloading {len(resources)} inner resources')
-        
+
         for line in resources:
             line_url, tag = get_line_url_and_tag(line)
             if not is_proper_to_download(url, line_url):
                 continue
             file_path = download_inner_resource_and_get_path(url, line_url,
-                                                            path_to_files_dir,
-                                                            tag)
+                                                             path_to_files_dir,
+                                                             tag)
             line = change_url(line, tag, file_path)
     else:
         logger.info('No inner resources, saving file')
@@ -83,4 +84,3 @@ def is_proper_to_download(url, line_url):
     line_url_host = urlparse(line_url).netloc
     return (line_url or line_url != url or (
             line_url_host and line_url_host == main_host))
-
