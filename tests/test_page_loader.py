@@ -1,20 +1,18 @@
 import os
-import pathlib
+import stat
 import tempfile
-from os.path import exists
 
 import requests
 from bs4 import BeautifulSoup
 from page_loader.changer import (make_absolute_url, make_name_from_url,
                                  remove_schema)
 from page_loader.loader import change_url, download, save_file
-from requests import exceptions
 from requests.exceptions import HTTPError, SSLError
 
 
 def test_save_file():
     data = 'hi, im data!'
-    
+
     with tempfile.TemporaryDirectory() as tmp_dir:
         path = os.path.join(tmp_dir, 'file_name')
         save_file(path, 'w+', data)
@@ -26,14 +24,14 @@ def test_save_file():
 def test_download():
     with tempfile.TemporaryDirectory() as tmp_dir:
         url = 'https://page-loader.hexlet.repl.co/'
-        # os.mkdir(os.path.join(tmp_dir, 'page-loader-hexlet-repl_files'))
         download(url, tmp_dir)
         html_path = os.path.join(tmp_dir, 'page-loader-hexlet-repl.html')
         assert os.path.exists(html_path)
-        
+
         path = os.path.join(tmp_dir, 'page-loader-hexlet-repl_files')
+        assert os.path.isdir(path)
         assert len(os.listdir(path)) ==  4
-        
+
         with open(html_path, 'r') as file:
             new_data = file.read()
             raw_data = requests.get(url)
@@ -41,17 +39,26 @@ def test_download():
             assert new_data != old_data
 
 
+def test_no_permission():
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        os.chmod(tmp_dir, stat.S_IRUSR)
+        try:
+            download('https://page-loader.hexlet.repl.co/', tmp_dir)
+        except PermissionError:
+            assert SystemExit
+        except SystemExit as e:
+            assert str(e) == 'You don\'t have permission!'
+
 
 def test_wrong_url():
     with tempfile.TemporaryDirectory() as tmp_dir:   
         try:
             download('https://page-loader-which-not-exist.hexlet.repl.co/', tmp_dir)
-        except SSLError as error:
+        except Exception as error:
             assert error
             assert SystemExit
         except SystemExit as s_exit:
-            assert str(s_exit) == 'SSL error occurred!'
-
+            assert str(s_exit) == 'Error occurred!'
 
 
 def test_wrong_dir():

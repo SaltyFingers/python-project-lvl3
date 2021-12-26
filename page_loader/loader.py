@@ -9,7 +9,7 @@ from page_loader.changer import (change_url, make_absolute_url,
                                  make_name_from_url)
 from page_loader.logger import get_logger
 from page_loader.manager import (get_line_data, get_line_url_and_tag,
-                                 get_page_data, save_file)
+                                 get_page_data, save_file, create_dir_for_files)
 
 ROOT_DIR_PATH = os.getcwd()
 logger = get_logger(__name__)
@@ -21,19 +21,17 @@ def download(url, path=ROOT_DIR_PATH):
         sys.exit('Output directory does not exist!')
 
     logger.info(f'Start downloading {url} to {path}')
+
     main_page_name = make_name_from_url(url, is_main=True)
     path_to_main_file = os.path.join(path, main_page_name + '.html')
     path_to_files_dir = os.path.join(path, main_page_name + '_files')
     page_data = get_page_data(url)
     resources = page_data.find_all(['img', 'link', 'script'])
     if is_any_resources(url, resources):
-        try:
-            os.mkdir(path_to_files_dir)
-        except PermissionError as error:
-            logger.error(f'Permission error: {error}')
-            sys.exit('You don\'t have permission!')
-
+        
+        create_dir_for_files(path_to_files_dir)
         logger.info(f'Start downloading {len(resources)} inner resources')
+        
         for line in resources:
             line_url, tag = get_line_url_and_tag(line)
             if not is_proper_to_download(url, line_url):
@@ -42,7 +40,11 @@ def download(url, path=ROOT_DIR_PATH):
                                                             path_to_files_dir,
                                                             tag)
             line = change_url(line, tag, file_path)
+    else:
+        logger.info('No inner resources, saving file')
+
     logger.info(f'Saving {path_to_main_file}!')
+
     save_file(path_to_main_file, 'w+', page_data.prettify())
     logger.info(f'{url} successfully downloaded!')
     return str(path_to_main_file)
@@ -60,7 +62,8 @@ def download_inner_resource_and_get_path(url, line_url,
             line_data = get_line_data(absolute_url, tag)
             flag = 'ab' if tag == 'img' else 'w+'
             save_file(file_path, flag, line_data)
-        except Exception:
+        except Exception as e:
+            print(e)
             spinner.fail(Fore.RED + 'Error with: ')
         logger.info('File successfully downloaded!')
     spinner.ok(Fore.GREEN + 'Downloaded: ')
