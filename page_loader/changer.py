@@ -1,11 +1,6 @@
 import pathlib
 from urllib.parse import urlparse, urlsplit, urlunsplit
 
-link_from_tag = {
-    'img': 'src',
-    'script': 'src',
-    'link': 'href', }
-
 
 def remove_schema(url):
     parsed_url = urlparse(url)
@@ -20,33 +15,43 @@ def make_absolute_url(main_url, url):
                                       netloc=split_main_url.netloc)
     return urlunsplit(absolute_url)
 
-
-def make_name_from_url(url, is_main=False):
-    name = []
-
+def remove_excess_symbols(url):
     if url.endswith('/'):
         url = url[:-1]
 
     if not url[0].isalnum():
         url = url[1:]
+    return url
 
-    if pathlib.PurePosixPath(url).suffix:
-        suffix = pathlib.PurePosixPath(url).suffix
-        range_ = remove_schema(url)[:-len(suffix)]
-    else:
-        suffix = '.html'
-        range_ = remove_schema(url)
 
-    for s in range_:
+def replace_symbols_with_dashes(url):
+    name = []
+    for s in url:
         if not s.isalnum():
             name.append('-')
         else:
             name.append(s)
+
+def make_name_from_url(url, is_main=False):
+    url = remove_excess_symbols(url)
+
+    if pathlib.PurePosixPath(url).suffix:
+        suffix = pathlib.PurePosixPath(url).suffix
+        new_url = remove_schema(url)[:-len(suffix)]
+    else:
+        suffix = '.html'
+        new_url = remove_schema(url)
+    name = replace_symbols_with_dashes(new_url)
     if not is_main:
         name.append(suffix)
     return ''.join(name)
 
 
 def change_url(line, tag, file_path):
+    link_from_tag = {
+    'img': 'src',
+    'script': 'src',
+    'link': 'href', }
+
     line[link_from_tag[tag]] = file_path
     return line
