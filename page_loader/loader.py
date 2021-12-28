@@ -64,20 +64,19 @@ def download_resources(url, data, path_to_files_dir):
     for line in data.find_all(['img', 'link', 'script']):
         line_url, tag = get_line_url_and_tag(line)
         if is_proper_to_download(url, line_url):
-            # file_path = download_resource(url, line_url,
-            #                               path_to_files_dir, tag)
-            absolute_url = make_absolute_url(url, line_url)
-            with yaspin(text=absolute_url) as spinner:
-                try:
-                    file_name = make_name_from_url(line_url)
-                    file_path = os.path.join(path_to_files_dir, file_name)
-                    logger.info(f'Downloading {absolute_url}')
-                    line_data = get_data(absolute_url, tag)
-                    flag = 'wb' if tag == 'img' else 'w+'
-                    save_file(file_path, flag, line_data)
-                except Exception as e:
-                    print(e)
-                    spinner.fail(Fore.RED + 'Error with: ')
-                logger.info('File successfully downloaded!')
-                spinner.ok(Fore.GREEN + 'Downloaded: ')
-            line = change_url(line, tag, file_path)
+            continue
+        absolute_url = make_absolute_url(url, line_url)
+        with yaspin(text=absolute_url) as spinner:
+            try:
+                file_name = make_name_from_url(line_url)
+                file_path = os.path.join(path_to_files_dir, file_name)
+                logger.info(f'Downloading {absolute_url}')
+                line_data = get_data(absolute_url, tag)
+                flag = 'wb' if tag == 'img' else 'w+'
+                save_file(file_path, flag, line_data)
+            except Exception as e:
+                print(e)
+                spinner.fail(Fore.RED + 'Error with: ')
+            logger.info('File successfully downloaded!')
+            spinner.ok(Fore.GREEN + 'Downloaded: ')
+        line = change_url(line, tag, file_path)

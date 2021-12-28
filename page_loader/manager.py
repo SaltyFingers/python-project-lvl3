@@ -37,13 +37,13 @@ def get_data(url, tag=None):
     except Exception as error:
         logger.error(f'Connection error occured: {error}')
         sys.exit('Someting went wrong!')
+
+    if tag == 'img':
+        return data.content
+    elif tag == 'link' or tag == 'script':
+        return BeautifulSoup(data.text, 'html.parser').prettify()
     else:
-        if tag == 'img':
-            return data.content
-        elif tag == 'link' or tag == 'script':
-            return BeautifulSoup(data.text, 'html.parser').prettify()
-        else:
-            return BeautifulSoup(data.text, 'html.parser')
+        return BeautifulSoup(data.text, 'html.parser')
 
 
 def create_dir_for_files(path):
