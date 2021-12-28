@@ -1,3 +1,4 @@
+import imghdr
 import os
 import stat
 import tempfile
@@ -10,6 +11,12 @@ from page_loader.loader import change_url, download, save_file
 from requests.exceptions import HTTPError, SSLError
 
 
+####
+# Дописать тесты для скачивания пикчи
+# Сохранения хтмл
+# Сравнения хтмл
+# 
+####
 def test_save_file():
     data = 'hi, im data!'
 
@@ -19,6 +26,23 @@ def test_save_file():
         assert os.path.isfile(path)
         with open(path, 'r') as file:
             assert file.read() == 'hi, im data!'
+
+
+def test_download_image():
+    name = 'nodejs.png'
+    url = 'https://page-loader.hexlet.repl.co/assets/professions/nodejs.png'
+    data = requests.get(url).content
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        path = os.path.join(tmp_dir, name)
+        save_file(path, 'wb', data)
+        assert os.path.exists(path)
+        with open(path, 'rb') as img:
+            content = img.read()
+        assert content == data
+        assert imghdr.what(path) == 'png'
+
+
+# https://page-loader.hexlet.repl.co/assets/professions/nodejs.png
 
 
 def test_download():
@@ -39,7 +63,7 @@ def test_download():
             assert new_data != old_data
 
 
-def test_no_permission():
+def test_no_permission_to_save_files():
     with tempfile.TemporaryDirectory() as tmp_dir:
         os.chmod(tmp_dir, stat.S_IRUSR)
         try:
@@ -58,7 +82,7 @@ def test_wrong_url():
             assert error
             assert SystemExit
         except SystemExit as s_exit:
-            assert str(s_exit) == 'Error occurred!'
+            assert str(s_exit) == 'Someting went wrong!'
 
 
 def test_wrong_dir():

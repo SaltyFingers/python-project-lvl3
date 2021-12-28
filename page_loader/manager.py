@@ -3,7 +3,6 @@ import sys
 
 import requests
 from bs4 import BeautifulSoup
-from requests.exceptions import HTTPError
 
 from page_loader.logger import get_logger
 
@@ -32,48 +31,19 @@ def get_line_url_and_tag(line):
         return None, None
 
 
-def get_page_data(url):
+def get_data(url, tag=None):
     try:
         data = requests.get(url)
-        # response = data.raise_for_status()
-    except HTTPError as http_error:
-        logger.error(f'HTTP error occurred: '
-                     f'{http_error}! Work stopped!')
-        sys.exit('HTTP error occurred!')
     except Exception as error:
-        logger.error(f'Error occured: '
-                     f'{error}! Work stopped!')
-        sys.exit('Error occurred!')
-    # if response != 200:
-    #     logger.error(f'Response error occured: code {response}')
-    #     sys.exit('Response error occured! Work stopped!')
-    data.encoding = 'utf-8'
-    page_data = BeautifulSoup(data.text, 'html.parser')
-    return page_data
-
-
-def get_line_data(obj_url, tag):
-    try:
-        data = requests.get(obj_url)
-        # data.raise_for_status()
-    except HTTPError as http_error:
-        logger.error(f'HTTP error occurred with inner resource: '
-                     f'{http_error}! Work stopped!')
-        sys.exit('HTTP error occurred with inner resource!')
-    except Exception as error:
-        logger.error(f'Error occured with inner resource: '
-                     f'{error}! Work stopped!')
-        sys.exit('Error occurred with inner resource!')
-    # data = requests.get(obj_url)
-    # response = data.raise_for_status()
-    # if response != 200:
-    #     logger.error(f'Resource response error occured: code {response}')
-    #     sys.exit('Resource response error occured! Work stopped!')
-    if tag == 'img':
-        return data.content
+        logger.error(f'Connection error occured: {error}')
+        sys.exit('Someting went wrong!')
     else:
-        data.encoding = 'utf-8'
-        return BeautifulSoup(data.text, 'html.parser').prettify()
+        if tag == 'img':
+            return data.content
+        elif tag == 'link' or tag == 'script':
+            return BeautifulSoup(data.text, 'html.parser').prettify()
+        else:
+            return BeautifulSoup(data.text, 'html.parser')
 
 
 def create_dir_for_files(path):
