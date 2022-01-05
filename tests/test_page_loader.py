@@ -8,15 +8,10 @@ from bs4 import BeautifulSoup
 from page_loader.changer import (make_absolute_url, make_name_from_url,
                                  remove_schema)
 from page_loader.loader import change_url, download, save_file
-from requests.exceptions import HTTPError, SSLError
+
+RAW_HTML_FILE = 'tests/fixtures/raw_html.html'
 
 
-####
-# Дописать тесты для скачивания пикчи
-# Сохранения хтмл
-# Сравнения хтмл
-# 
-####
 def test_save_file():
     data = 'hi, im data!'
 
@@ -42,9 +37,6 @@ def test_download_image():
         assert imghdr.what(path) == 'png'
 
 
-# https://page-loader.hexlet.repl.co/assets/professions/nodejs.png
-
-
 def test_download():
     with tempfile.TemporaryDirectory() as tmp_dir:
         url = 'https://page-loader.hexlet.repl.co/'
@@ -58,9 +50,8 @@ def test_download():
 
         with open(html_path, 'r') as file:
             new_data = file.read()
-            raw_data = requests.get(url)
-            old_data = BeautifulSoup(raw_data.text, 'html.parser')
-            assert new_data != old_data
+            raw_data = open(RAW_HTML_FILE).read()
+            assert new_data != raw_data
 
 
 def test_no_permission_to_save_files():
@@ -93,10 +84,14 @@ def test_wrong_dir():
 
 
 def test_make_name_from_url():
-    assert make_name_from_url('https://ru.hexlet.io/courses') == 'ru-hexlet-io-courses.html'
-    assert make_name_from_url('https://ru.hexlet.io/courses', True) == 'ru-hexlet-io-courses'
-    assert make_name_from_url('some/image/right.here') == 'some-image-right.here'
-    assert make_name_from_url('some/image/right.here', True) == 'some-image-right'
+    assert make_name_from_url('https://ru.hexlet.io/courses'
+                              ) == 'ru-hexlet-io-courses.html'
+    assert make_name_from_url('https://ru.hexlet.io/courses',
+                              True) == 'ru-hexlet-io-courses'
+    assert make_name_from_url('some/image/right.here'
+                              ) == 'some-image-right.here'
+    assert make_name_from_url('some/image/right.here',
+                              True) == 'some-image-right'
 
 
 def test_make_absolute_url():

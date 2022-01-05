@@ -15,10 +15,10 @@ def make_absolute_url(main_url, url):
                                       netloc=split_main_url.netloc)
     return urlunsplit(absolute_url)
 
+
 def remove_excess_symbols(url):
     if url.endswith('/'):
         url = url[:-1]
-
     if not url[0].isalnum():
         url = url[1:]
     return url
@@ -31,6 +31,8 @@ def replace_symbols_with_dashes(url):
             name.append('-')
         else:
             name.append(s)
+    return name
+
 
 def make_name_from_url(url, is_main=False):
     url = remove_excess_symbols(url)
@@ -49,9 +51,8 @@ def make_name_from_url(url, is_main=False):
 
 def change_url(line, tag, file_path):
     link_from_tag = {
-    'img': 'src',
-    'script': 'src',
-    'link': 'href', }
-
+        'img': 'src',
+        'script': 'src',
+        'link': 'href', }
     line[link_from_tag[tag]] = file_path
     return line
