@@ -15,7 +15,9 @@ def save_file(path, flag, data):
     except PermissionError as error:
         logger.error(f'Permission error occured: {error}!')
         sys.exit('You don\'t have permission!')
-
+    except FileNotFoundError as error:
+        logger.error(f'Directory {path} does not exists! Error: {error}')
+        sys.exit('Directory does not exists!')
     file.write(data)
     file.close()
 
@@ -36,7 +38,7 @@ def get_data(url, tag=None):
         data = requests.get(url)
     except Exception as error:
         logger.error(f'Connection error occured: {error}')
-        sys.exit('Someting went wrong!')
+        sys.exit(f'An error occured with {url}')
 
     if tag == 'img':
         return data.content
@@ -54,3 +56,6 @@ def create_dir_for_files(path):
         sys.exit('You don\'t have permission!')
     except FileExistsError:
         pass
+    if not os.path.exists(path):
+        logger.error('Directory for files does not exist after creating!')
+        sys.exit('An error occured with direcrory for files!')

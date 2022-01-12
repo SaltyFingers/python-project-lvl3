@@ -25,4 +25,8 @@ Default directory to downloading is your current directory.
 
 ### Demonstration
 
-``PLEASE STAND BY``
+Correct work:
+[![asciicast](https://asciinema.org/a/jbKx78NUOIGoS5QzHeafV7V3m.svg)](https://asciinema.org/a/jbKx78NUOIGoS5QzHeafV7V3m)
+
+Incorrect work:
+[![asciicast](https://asciinema.org/a/oppWHbQvu8C49M6ybhgf4wv6u.svg)](https://asciinema.org/a/oppWHbQvu8C49M6ybhgf4wv6u)

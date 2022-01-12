@@ -23,13 +23,13 @@ def main():
         response.raise_for_status()
     except SSLError as ssl_error:
         logger.error(f'SSL error occurred: {ssl_error}!')
-        sys.exit('SSL error occurred!')
+        sys.exit(f'SSL error occurred with {args.url}')
     except HTTPError as http_error:
         logger.error(f'HTTP error occurred: {http_error}!')
-        sys.exit('HTTP error occurred!')
+        sys.exit(f'HTTP error occurred with {args.url}')
     except Exception as error:
         logger.error(f'An error occurred: {error}!')
-        sys.exit('An error occurred!')
+        sys.exit(f'An error occurred with {args.url}')
     else:
         logger.info('Got response! Continue!')
         download(args.url, args.path)

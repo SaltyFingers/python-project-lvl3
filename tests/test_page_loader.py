@@ -7,7 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 from page_loader.changer import (make_absolute_url, make_name_from_url,
                                  remove_schema)
-from page_loader.loader import change_url, download, save_file
+from page_loader.loader import download, save_file
 
 RAW_HTML_FILE = 'tests/fixtures/raw_html.html'
 
@@ -73,7 +73,7 @@ def test_wrong_url():
             assert error
             assert SystemExit
         except SystemExit as s_exit:
-            assert str(s_exit) == 'Someting went wrong!'
+            assert str(s_exit) == 'An error occured with https://page-loader-which-not-exist.hexlet.repl.co/'
 
 
 def test_wrong_dir():
@@ -95,10 +95,13 @@ def test_make_name_from_url():
 
 
 def test_make_absolute_url():
-    assert make_absolute_url('https://super-site.com/files',
-                             'https://super-site.com/files/images/img.jpeg') == 'https://super-site.com/files/images/img.jpeg'
-    assert make_absolute_url('https://super-site.com/files',
-                             'files/images/img.jpeg') == 'https://super-site.com/files/images/img.jpeg'
+    assert make_absolute_url('https://site.com/files',
+                             'https://site.com/files/images/img.jpeg'
+                             ) == 'https://site.com/files/images/img.jpeg'
+    
+    assert make_absolute_url('https://site.com/files',
+                             'files/images/img.jpeg'
+                             ) == 'https://site.com/files/images/img.jpeg'
 
 
 def tets_remove_schema():

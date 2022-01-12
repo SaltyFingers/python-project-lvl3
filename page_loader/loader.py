@@ -62,15 +62,12 @@ def download_resources(url, data, path_to_files_dir):
         if not is_proper_to_download(url, line_url):
             bar.next()
             continue
-        try:
-            file_name = make_name_from_url(line_url)
-            file_path = os.path.join(path_to_files_dir, file_name)
-            logger.info(f'Downloading {absolute_url}')
-            line_data = get_data(absolute_url, tag)
-            flag = 'wb' if tag == 'img' else 'w+'
-            save_file(file_path, flag, line_data)
-        except Exception as e:
-            print(e)
+        file_name = make_name_from_url(line_url)
+        file_path = os.path.join(path_to_files_dir, file_name)
+        logger.info(f'Downloading {absolute_url}')
+        line_data = get_data(absolute_url, tag)
+        flag = 'wb' if tag == 'img' else 'w+'
+        save_file(file_path, flag, line_data)
         logger.info('File successfully downloaded!')
         line = change_url(line, tag, file_path)
         bar.next()
