@@ -53,6 +53,13 @@ def test_crete_dir_for_files():
         except FileExistsError:
             assert FileExistsError
         
+        os.chmod(path, stat.S_IRUSR)
+        try :
+            create_dir_for_files(path)
+        except PermissionError:
+            assert SystemExit
+        except SystemExit as e:
+            assert str(e) == 'You don\'t have permission!'
         try:
             create_dir_for_files(non_exist_path)
         except FileNotFoundError:
