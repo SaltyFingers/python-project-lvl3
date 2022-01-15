@@ -39,7 +39,6 @@ def get_data(url, tag=None):
     except Exception as error:
         logger.error(f'Connection error occured: {error}')
         sys.exit(f'An error occured with {url}')
-
     if tag == 'img':
         return data.content
     elif tag == 'link' or tag == 'script':

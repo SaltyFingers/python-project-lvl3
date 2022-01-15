@@ -2,14 +2,56 @@ import imghdr
 import os
 import stat
 import tempfile
+import bs4
 
 import requests
 from bs4 import BeautifulSoup
 from page_loader.changer import (make_absolute_url, make_name_from_url,
                                  remove_schema)
-from page_loader.loader import download, save_file
+from page_loader.loader import download, is_any_resources
+from page_loader.manager import create_dir_for_files, get_data, save_file
 
 RAW_HTML_FILE = 'tests/fixtures/raw_html.html'
+
+
+def test_make_name_from_url():
+    assert make_name_from_url('https://ru.hexlet.io/courses'
+                              ) == 'ru-hexlet-io-courses.html'
+    assert make_name_from_url('https://ru.hexlet.io/courses',
+                              True) == 'ru-hexlet-io-courses'
+    assert make_name_from_url('some/image/right.here'
+                              ) == 'some-image-right.here'
+    assert make_name_from_url('some/image/right.here',
+                              True) == 'some-image-right'
+
+
+def test_make_absolute_url():
+    assert make_absolute_url('https://site.com/files',
+                             'https://site.com/files/images/img.jpeg'
+                             ) == 'https://site.com/files/images/img.jpeg'
+    
+    assert make_absolute_url('https://site.com/files',
+                             'files/images/img.jpeg'
+                             ) == 'https://site.com/files/images/img.jpeg'
+
+
+def tets_remove_schema():
+    assert remove_schema('https://site.com') == 'site.com'
+    assert remove_schema('http://site.com') == 'site.com'
+    assert remove_schema('site.com') == 'site.com'
+
+
+def test_crete_dir_for_files():
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        path = os.path.join(tmp_dir, 'tmp_dir_files')
+        create_dir_for_files(path)
+        assert os.path.isdir(path)
+
+
+def test_get_data():
+    assert type(get_data('https://page-loader.hexlet.repl.co/')) == bs4.BeautifulSoup
+    assert type(get_data('https://page-loader.hexlet.repl.co/assets/professions/nodejs.png', 'img')) == bytes
+    assert type(get_data('https://page-loader.hexlet.repl.co/script.js', 'script')) == str
 
 
 def test_save_file():
@@ -22,6 +64,12 @@ def test_save_file():
         with open(path, 'r') as file:
             assert file.read() == 'hi, im data!'
 
+
+def test_is_any_resources():
+    url = 'https://page-loader.hexlet.repl.co/'
+    page_data = get_data(url)
+    resources = page_data.find_all(['img', 'link', 'script'])
+    assert is_any_resources(url, resources) == True
 
 def test_download_image():
     name = 'nodejs.png'
@@ -81,30 +129,3 @@ def test_wrong_dir():
         download('https://page-loader.hexlet.repl.co/', '/not-exist/downloads')
     except SystemExit as e:
         assert str(e) == 'Output directory does not exist!'
-
-
-def test_make_name_from_url():
-    assert make_name_from_url('https://ru.hexlet.io/courses'
-                              ) == 'ru-hexlet-io-courses.html'
-    assert make_name_from_url('https://ru.hexlet.io/courses',
-                              True) == 'ru-hexlet-io-courses'
-    assert make_name_from_url('some/image/right.here'
-                              ) == 'some-image-right.here'
-    assert make_name_from_url('some/image/right.here',
-                              True) == 'some-image-right'
-
-
-def test_make_absolute_url():
-    assert make_absolute_url('https://site.com/files',
-                             'https://site.com/files/images/img.jpeg'
-                             ) == 'https://site.com/files/images/img.jpeg'
-    
-    assert make_absolute_url('https://site.com/files',
-                             'files/images/img.jpeg'
-                             ) == 'https://site.com/files/images/img.jpeg'
-
-
-def tets_remove_schema():
-    assert remove_schema('https://site.com') == 'site.com'
-    assert remove_schema('http://site.com') == 'site.com'
-    assert remove_schema('site.com') == 'site.com'
