@@ -44,7 +44,6 @@ def tets_remove_schema():
 def test_crete_dir_for_files():
     with tempfile.TemporaryDirectory() as tmp_dir:
         path = os.path.join(tmp_dir, 'tmp_dir_files')
-        non_exist_path = os.path.join(tmp_dir, 'there_is_no_path')
         create_dir_for_files(path)
         assert os.path.isdir(path)
         
@@ -60,12 +59,7 @@ def test_crete_dir_for_files():
             assert SystemExit
         except SystemExit as e:
             assert str(e) == 'You don\'t have permission!'
-        try:
-            create_dir_for_files(non_exist_path)
-        except FileNotFoundError:
-            assert SystemExit
-        except SystemExit as e:
-            assert str(e) == 'An error occured with direcrory for files!'
+
 
 
 def test_get_data():
@@ -79,10 +73,29 @@ def test_save_file():
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         path = os.path.join(tmp_dir, 'file_name')
+        path = os.path.join(tmp_dir, 'file_name')
         save_file(path, 'w+', data)
         assert os.path.isfile(path)
         with open(path, 'r') as file:
             assert file.read() == 'hi, im data!'
+        
+        try:
+            save_file('dir/lol/path_to_file', 'w+', data)
+        except FileNotFoundError:
+            assert SystemExit
+        except SystemExit as e:
+            assert str(e) == 'Directory does not exists!'
+
+        try:
+            os.chmod(tmp_dir, stat.S_IRUSR)
+            save_file(path, 'w+', data)
+        except PermissionError:
+            assert SystemExit
+        except SystemExit as e:
+            assert str(e) == 'You don\'t have permission!'
+
+
+
 
 
 def test_is_any_resources():
