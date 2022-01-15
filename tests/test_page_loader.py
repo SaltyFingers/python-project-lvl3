@@ -44,8 +44,21 @@ def tets_remove_schema():
 def test_crete_dir_for_files():
     with tempfile.TemporaryDirectory() as tmp_dir:
         path = os.path.join(tmp_dir, 'tmp_dir_files')
+        non_exist_path = os.path.join(tmp_dir, 'there_is_no_path')
         create_dir_for_files(path)
         assert os.path.isdir(path)
+        
+        try:    
+            create_dir_for_files(path)
+        except FileExistsError:
+            assert FileExistsError
+        
+        try:
+            create_dir_for_files(non_exist_path)
+        except FileNotFoundError:
+            assert SystemExit
+        except SystemExit as e:
+            assert str(e) == 'An error occured with direcrory for files!'
 
 
 def test_get_data():
