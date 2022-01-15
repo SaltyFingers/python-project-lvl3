@@ -24,6 +24,8 @@ You will get ``.html`` file containing page data in directory ``path/to/director
 Default directory to downloading is your current directory.
 
 ### Demonstration
+Installation:
+[![asciicast](https://asciinema.org/a/dWRdBeZq1b4NlyTrf2kLaklAV.svg)](https://asciinema.org/a/dWRdBeZq1b4NlyTrf2kLaklAV)
 
 Correct work:
 [![asciicast](https://asciinema.org/a/jbKx78NUOIGoS5QzHeafV7V3m.svg)](https://asciinema.org/a/jbKx78NUOIGoS5QzHeafV7V3m)

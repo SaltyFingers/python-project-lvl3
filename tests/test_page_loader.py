@@ -2,8 +2,9 @@ import imghdr
 import os
 import stat
 import tempfile
-import bs4
+from unittest.mock import Mock
 
+import bs4
 import requests
 from bs4 import BeautifulSoup
 from page_loader.changer import (make_absolute_url, make_name_from_url,
@@ -13,6 +14,15 @@ from page_loader.manager import create_dir_for_files, get_data, save_file
 
 RAW_HTML_FILE = 'tests/fixtures/raw_html.html'
 
+
+def test_mock():
+    mock = Mock()
+    
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        url = 'https://page-loader.hexlet.repl.co/'
+        mock(download(url, tmp_dir))
+
+        assert mock.call_count == 1
 
 def test_make_name_from_url():
     assert make_name_from_url('https://ru.hexlet.io/courses'
