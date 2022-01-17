@@ -2,9 +2,6 @@ import argparse
 import pathlib
 import sys
 
-import requests
-from requests.exceptions import HTTPError, SSLError
-
 from page_loader.loader import download
 from page_loader.logger import get_logger
 
@@ -19,20 +16,10 @@ def main():
     args = parser.parse_args()
 
     try:
-        response = requests.get(args.url)
-        response.raise_for_status()
-    except SSLError as ssl_error:
-        logger.error(f'SSL error occurred: {ssl_error}!')
-        sys.exit(f'SSL error occurred with {args.url}')
-    except HTTPError as http_error:
-        logger.error(f'HTTP error occurred: {http_error}!')
-        sys.exit(f'HTTP error occurred with {args.url}')
-    except Exception as error:
-        logger.error(f'An error occurred: {error}!')
-        sys.exit(f'An error occurred with {args.url}')
-    else:
-        logger.info('Got response! Continue!')
         download(args.url, args.path)
+    except Exception:
+        sys.exit(1)
+    sys.exit(0)
 
 
 if __name__ == '__main__':

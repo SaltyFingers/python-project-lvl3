@@ -2,12 +2,13 @@ import imghdr
 import os
 import stat
 import tempfile
+import traceback
 from unittest.mock import Mock
 
 import bs4
 import requests
 from bs4 import BeautifulSoup
-from page_loader.changer import (make_absolute_url, make_name_from_url,
+from page_loader.changer import (make_absolute_url, make_main_name,
                                  remove_schema)
 from page_loader.loader import download, is_any_resources
 from page_loader.manager import create_dir_for_files, get_data, save_file
@@ -25,14 +26,14 @@ def test_mock():
         assert mock.call_count == 1
 
 def test_make_name_from_url():
-    assert make_name_from_url('https://ru.hexlet.io/courses'
-                              ) == 'ru-hexlet-io-courses.html'
-    assert make_name_from_url('https://ru.hexlet.io/courses',
-                              True) == 'ru-hexlet-io-courses'
-    assert make_name_from_url('some/image/right.here'
-                              ) == 'some-image-right.here'
-    assert make_name_from_url('some/image/right.here',
-                              True) == 'some-image-right'
+    assert make_main_name('https://ru.hexlet.io/courses'
+                          ) == 'ru-hexlet-io-courses.html'
+    assert make_main_name('https://ru.hexlet.io/courses',
+                          True) == 'ru-hexlet-io-courses'
+    assert make_main_name('some/image/right.here'
+                          ) == 'some-image-right.here'
+    assert make_main_name('some/image/right.here',
+                          True) == 'some-image-right'
 
 
 def test_make_absolute_url():
@@ -105,9 +106,6 @@ def test_save_file():
             assert str(e) == 'You don\'t have permission!'
 
 
-
-
-
 def test_is_any_resources():
     url = 'https://page-loader.hexlet.repl.co/'
     page_data = get_data(url)
@@ -162,7 +160,7 @@ def test_wrong_url():
             download('https://page-loader-which-not-exist.hexlet.repl.co/', tmp_dir)
         except Exception as error:
             assert error
-            assert SystemExit
+            assert SystemExit(1)
         except SystemExit as s_exit:
             assert str(s_exit) == 'An error occured with https://page-loader-which-not-exist.hexlet.repl.co/'
 
@@ -170,5 +168,7 @@ def test_wrong_url():
 def test_wrong_dir():
     try:
         download('https://page-loader.hexlet.repl.co/', '/not-exist/downloads')
-    except SystemExit as e:
-        assert str(e) == 'Output directory does not exist!'
+    except FileNotFoundError as e:
+
+        assert str(e) == 'Output directory does not exists!'
+        assert SystemExit(1)

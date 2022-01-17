@@ -1,5 +1,6 @@
 import pathlib
 from urllib.parse import urlparse, urlsplit, urlunsplit
+import os
 
 
 def remove_schema(url):
@@ -34,7 +35,7 @@ def replace_symbols_with_dashes(url):
     return name
 
 
-def make_name_from_url(url, is_main=False):
+def make_main_name(url, is_main=False):
     url = remove_excess_symbols(url)
 
     if pathlib.PurePosixPath(url).suffix:
@@ -49,7 +50,13 @@ def make_name_from_url(url, is_main=False):
     return ''.join(name)
 
 
-def change_url(line, tag, file_path):
+def make_names(path, main_name):
+    path_to_main_file = os.path.join(path, main_name + '.html')
+    path_to_files_dir = os.path.join(path, main_name + '_files')
+    return path_to_main_file, path_to_files_dir
+
+
+def make_new_line(line, tag, file_path):
     link_from_tag = {
         'img': 'src',
         'script': 'src',
