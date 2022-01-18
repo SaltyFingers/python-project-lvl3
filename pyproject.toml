@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "hexlet-code"
 version = "0.1.0"
-description = "It is a page loader"
+description = "This is a page loader"
 authors = ["Evchik <elcric66@gmail.com>"]
 
 packages = [
