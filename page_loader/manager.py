@@ -2,7 +2,8 @@ import os
 from urllib.parse import urlparse
 
 import requests
-from bs4 import BeautifulSoup
+import bs4
+# from bs4 import BeautifulSoup
 from progress.bar import Bar
 from requests.exceptions import HTTPError, SSLError
 
@@ -73,9 +74,9 @@ def get_data(url, tag=None):
     if tag == 'img':
         return data.content
     elif tag == 'link' or tag == 'script':
-        return BeautifulSoup(data.text, 'html.parser').prettify()
+        return bs4.BeautifulSoup(data.text, 'html.parser').prettify()
     else:
-        return BeautifulSoup(data.text, 'html.parser')
+        return bs4.BeautifulSoup(data.text, 'html.parser')
 
 
 def is_any_resources(url, resources):
