@@ -105,16 +105,14 @@ def download_resources(url, data, path_to_files_dir):
     for line in data.find_all(['img', 'link', 'script']):
         line_url, tag = get_line_url_and_tag(line)
         absolute_url = make_absolute_url(url, line_url)
-        if not is_proper_to_download(url, line_url):
-            bar.next()
-            continue
-        file_name = make_main_name(line_url)
-        file_path = os.path.join(path_to_files_dir, file_name)
-        logger.info(f'Downloading {absolute_url}')
-        line_data = get_data(absolute_url, tag)
-        flag = 'wb' if tag == 'img' else 'w+'
-        save_file(file_path, flag, line_data)
-        logger.info('File successfully downloaded!')
-        line = make_new_line(line, tag, file_path)
+        if is_proper_to_download(url, line_url):
+            file_name = make_main_name(line_url)
+            file_path = os.path.join(path_to_files_dir, file_name)
+            logger.info(f'Downloading {absolute_url}')
+            line_data = get_data(absolute_url, tag)
+            flag = 'wb' if tag == 'img' else 'w+'
+            save_file(file_path, flag, line_data)
+            logger.info('File successfully downloaded!')
+            line = make_new_line(line, tag, file_path)
         bar.next()
     bar.finish()
