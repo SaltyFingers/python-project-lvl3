@@ -58,7 +58,7 @@ def get_line_url_and_tag(line):
 def get_data(url, tag=None):
     try:
         data = requests.get(url)
-        status = data.raise_for_status()
+        status = data.status_code
     except SSLError as ssl_error:
         logger.error(f'SSL error occurred: {ssl_error} with {url}!')
         print(f'SSL error occurred with {url}')
@@ -72,7 +72,8 @@ def get_data(url, tag=None):
         print(f'An error occurred with {url}')
         raise
     if status != 200:
-        print('Status code is not 200')
+        logger.error(f'{url} - Status code is not 200, it\'s {status}!')
+        print('Responce code is not 200!', status)
         raise Exception
 
     if tag == 'img':
