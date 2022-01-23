@@ -26,7 +26,7 @@ def download(url, path=ROOT_DIR_PATH):
     else:
         logger.info('No inner resources, saving file')
     logger.info(f'Saving {path_to_main_file}!')
-    save_file(path_to_main_file, 'w+', page_data.prettify(formatter=None))
+    save_file(path_to_main_file, 'w+', page_data)
     print(f'Page downloaded into {path_to_main_file}')
     logger.info(f'{url} successfully downloaded!')
     return str(path_to_main_file)

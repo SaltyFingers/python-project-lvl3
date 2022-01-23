@@ -78,10 +78,11 @@ def get_data(url, tag=None):
 
     if tag == 'img':
         return data.content
-    elif tag == 'link' or tag == 'script':
-        return bs4.BeautifulSoup(data.text, 'html.parser').prettify(formatter=None)
+    # else tag == 'link' or tag == 'script':
     else:
-        return bs4.BeautifulSoup(data.text, 'html.parser')
+        return bs4.BeautifulSoup(data.text, 'html.parser').prettify()
+    # else:
+    #     return bs4.BeautifulSoup(data.text, 'html.parser')
 
 
 def is_any_resources(url, resources):
