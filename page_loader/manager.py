@@ -52,7 +52,7 @@ def get_line_url_and_tag(line):
     elif line.name == 'script' and line.get('src'):
         return line.get('src'), line.name
     else:
-        return None, None
+        return None
 
 
 def get_data(url, tag=None):
@@ -103,6 +103,8 @@ def download_resources(url, data, path_to_files_dir):
     bar = Bar('Downloading resouces ',
               max=len(data.find_all(['img', 'link', 'script'])))
     for line in data.find_all(['img', 'link', 'script']):
+        if get_line_url_and_tag(line) is None:
+            continue 
         line_url, tag = get_line_url_and_tag(line)
         absolute_url = make_absolute_url(url, line_url)
         if is_proper_to_download(url, line_url):
