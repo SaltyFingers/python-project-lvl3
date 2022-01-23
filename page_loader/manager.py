@@ -95,8 +95,9 @@ def is_any_resources(url, resources):
 def is_proper_to_download(url, line_url):
     main_host = urlparse(url).netloc
     line_url_host = urlparse(line_url).netloc
-    return (line_url or line_url != url or (
-            line_url_host and line_url_host == main_host))
+    return (line_url and line_url != url or (
+            line_url_host and line_url_host == main_host) or
+            not line_url_host)
 
 
 def download_resources(url, data, path_to_files_dir):
@@ -104,7 +105,7 @@ def download_resources(url, data, path_to_files_dir):
               max=len(data.find_all(['img', 'link', 'script'])))
     for line in data.find_all(['img', 'link', 'script']):
         if get_line_url_and_tag(line) is None:
-            continue 
+            continue
         line_url, tag = get_line_url_and_tag(line)
         absolute_url = make_absolute_url(url, line_url)
         if is_proper_to_download(url, line_url):
