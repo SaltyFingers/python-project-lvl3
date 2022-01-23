@@ -78,12 +78,8 @@ def get_data(url, tag=None):
 
     if tag == 'img':
         return data.content
-
-    data.encoding = 'utf-8'
-
-    if tag == 'link' or tag == 'script':
-        return bs4.BeautifulSoup(data.text, 'html.parser'
-                                 ).prettify(formatter="html")
+    elif tag == 'link' or tag == 'script':
+        return bs4.BeautifulSoup(data.text, 'html.parser').prettify(encoding=None)
     else:
         return bs4.BeautifulSoup(data.text, 'html.parser')
 
