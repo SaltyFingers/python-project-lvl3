@@ -76,12 +76,11 @@ def get_data(url, tag=None):
         print('Responce code is not 200!', status)
         raise Exception
 
-    if tag == 'img':
-        return data.content
-
     data.encoding = 'utf-8'
 
-    if tag == 'link' or tag == 'script':
+    if tag == 'img':
+        return data.content
+    elif tag == 'link' or tag == 'script':
         return bs4.BeautifulSoup(data.text, 'html.parser').prettify()
     else:
         return bs4.BeautifulSoup(data.text, 'html.parser')
