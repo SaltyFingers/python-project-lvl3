@@ -77,13 +77,13 @@ def get_data(url, tag=None):
         raise Exception
 
     data.encoding = 'utf-8'
-
+    content = data.content
     if tag == 'img':
-        return data.content
+        return content
     elif tag == 'link' or tag == 'script':
-        return bs4.BeautifulSoup(data.text, 'html.parser').prettify()
+        return bs4.BeautifulSoup(content, 'html.parser').prettify()
     else:
-        return bs4.BeautifulSoup(data.text, 'html.parser')
+        return bs4.BeautifulSoup(content, 'html.parser')
 
 
 def is_any_resources(url, resources):
