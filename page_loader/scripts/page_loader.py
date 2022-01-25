@@ -1,5 +1,4 @@
 import argparse
-import pathlib
 import sys
 
 from page_loader.loader import download
