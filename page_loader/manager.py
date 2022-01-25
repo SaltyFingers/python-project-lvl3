@@ -78,9 +78,9 @@ def get_data(url, tag=None):
     if tag == 'img':
         return response.content
     elif tag == 'link' or tag == 'script':
-        return response.text
+        return response.content
     else:
-        return BeautifulSoup(response.text, 'html.parser')
+        return BeautifulSoup(response.content, 'html.parser')
 
 
 def is_any_resources(url, resources):
@@ -112,7 +112,7 @@ def download_resources(url, data, path_to_files_dir):
             file_path = os.path.join(path_to_files_dir, file_name)
             logger.info(f'Downloading {absolute_url}')
             line_data = get_data(absolute_url, tag)
-            flag = 'wb' if tag == 'img' else 'w+'
+            flag = 'wb' if isinstance(line_data, bytes) else 'w'
             save_file(file_path, flag, line_data)
             logger.info('File successfully downloaded!')
             line = make_new_line(line, tag, file_path)
