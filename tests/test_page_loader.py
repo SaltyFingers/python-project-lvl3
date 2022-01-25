@@ -2,12 +2,10 @@ import imghdr
 import os
 import stat
 import tempfile
-import traceback
 from unittest.mock import Mock
 
 import bs4
 import requests
-from bs4 import BeautifulSoup
 from page_loader.changer import (make_absolute_url, make_main_name,
                                  remove_schema)
 from page_loader.loader import download, is_any_resources
@@ -18,12 +16,13 @@ RAW_HTML_FILE = 'tests/fixtures/raw_html.html'
 
 def test_mock():
     mock = Mock()
-    
+
     with tempfile.TemporaryDirectory() as tmp_dir:
         url = 'https://page-loader.hexlet.repl.co/'
         mock(download(url, tmp_dir))
 
         assert mock.call_count == 1
+
 
 def test_make_name_from_url():
     assert make_main_name('https://ru.hexlet.io/courses'
@@ -40,7 +39,7 @@ def test_make_absolute_url():
     assert make_absolute_url('https://site.com/files',
                              'https://site.com/files/images/img.jpeg'
                              ) == 'https://site.com/files/images/img.jpeg'
-    
+
     assert make_absolute_url('https://site.com/files',
                              'files/images/img.jpeg'
                              ) == 'https://site.com/files/images/img.jpeg'
@@ -57,14 +56,14 @@ def test_crete_dir_for_files():
         path = os.path.join(tmp_dir, 'tmp_dir_files')
         create_dir_for_files(path)
         assert os.path.isdir(path)
-        
-        try:    
+
+        try:
             create_dir_for_files(path)
         except FileExistsError:
             assert FileExistsError
-        
+
         os.chmod(path, stat.S_IRUSR)
-        try :
+        try:
             create_dir_for_files(path)
         except PermissionError:
             assert SystemExit
@@ -72,11 +71,13 @@ def test_crete_dir_for_files():
             assert str(e) == 'You don\'t have permission!'
 
 
-
 def test_get_data():
-    assert type(get_data('https://page-loader.hexlet.repl.co/')) == bs4.BeautifulSoup
-    assert type(get_data('https://page-loader.hexlet.repl.co/assets/professions/nodejs.png', 'img')) == bytes
-    # assert type(get_data('https://page-loader.hexlet.repl.co/script.js', 'script')) == str
+    img_path = 'https://page-loader.hexlet.repl.co\
+/assets/professions/nodejs.png'
+    assert type(get_data(
+                'https://page-loader.hexlet.repl.co/')) == bs4.BeautifulSoup
+    assert type(get_data(
+                img_path, 'img')) == bytes
 
 
 def test_save_file():
@@ -89,7 +90,7 @@ def test_save_file():
         assert os.path.isfile(path)
         with open(path, 'r') as file:
             assert file.read() == 'hi, im data!'
-        
+
         try:
             save_file('dir/lol/path_to_file', 'w+', data)
         except FileNotFoundError:
@@ -110,7 +111,8 @@ def test_is_any_resources():
     url = 'https://page-loader.hexlet.repl.co/'
     page_data = get_data(url)
     resources = page_data.find_all(['img', 'link', 'script'])
-    assert is_any_resources(url, resources) == True
+    assert is_any_resources(url, resources) is True
+
 
 def test_download_image():
     name = 'nodejs.png'
@@ -135,7 +137,7 @@ def test_download():
 
         path = os.path.join(tmp_dir, 'page-loader-hexlet-repl_files')
         assert os.path.isdir(path)
-        assert len(os.listdir(path)) ==  4
+        assert len(os.listdir(path)) == 4
 
         with open(html_path, 'r') as file:
             new_data = file.read()
@@ -155,14 +157,17 @@ def test_no_permission_to_save_files():
 
 
 def test_wrong_url():
-    with tempfile.TemporaryDirectory() as tmp_dir:   
+    with tempfile.TemporaryDirectory() as tmp_dir:
         try:
-            download('https://page-loader-which-not-exist.hexlet.repl.co/', tmp_dir)
+            download('https://page-loader-which-not-exist.hexlet.repl.co/',
+                     tmp_dir)
         except Exception as error:
             assert error
             assert SystemExit(1)
         except SystemExit as s_exit:
-            assert str(s_exit) == 'An error occured with https://page-loader-which-not-exist.hexlet.repl.co/'
+            assert (str(s_exit) ==
+                    'An error occured with \
+                    https://page-loader-which-not-exist.hexlet.repl.co/')
 
 
 def test_wrong_dir():
