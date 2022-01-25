@@ -9,17 +9,16 @@ logger = get_logger(__name__)
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Page loader',
-                                     conflict_handler='resolve')
-    parser.add_argument('url')
+    parser = argparse.ArgumentParser(description='Page loader')
+    parser.add_argument('url', help='page to download')
     parser.add_argument('-o',
                         '--output',
-                        default='current',
-                        type=pathlib.Path)
+                        help='output folder',
+                        default='current')
     args = parser.parse_args()
 
     try:
-        download(args.url, args.path)
+        download(args.url, args.output)
     except Exception:
         sys.exit(1)
     sys.exit(0)

@@ -12,6 +12,6 @@ def get_stream_handler():
 
 def get_logger(name):
     logger = logging.getLogger(name)
-    logger.setLevel(logging.CRITICAL)
+    logger.setLevel(logging.WARNING)
     logger.addHandler(get_stream_handler())
     return logger

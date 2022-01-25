@@ -10,12 +10,13 @@ logger = get_logger(__name__)
 
 
 def download(url, path):
-    if not os.path.exists(path):
+    if path == 'current':
+        path = ROOT_DIR_PATH
+    elif not os.path.exists(path):
         logger.error(f'Output directory {path} does not exist!')
         print('Output directory does not exists!')
         raise FileNotFoundError('Output directory does not exists!')
-    if path == 'current':
-        path = ROOT_DIR_PATH
+
     logger.info(f'Start downloading {url} to {path}')
     main_page_name = make_main_name(url, is_main=True)
     path_to_main_file, path_to_files_dir = make_names(path, main_page_name)

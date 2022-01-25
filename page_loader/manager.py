@@ -30,7 +30,8 @@ def create_dir_for_files(path):
 
 def save_file(path, flag, data):
     try:
-        file = open(path, flag)
+        with open(path, flag) as file:
+            file.write(data)
     except PermissionError as error:
         logger.error(f'Permission error occured: {error}!')
         print('You don\'t have permission!')
@@ -39,8 +40,6 @@ def save_file(path, flag, data):
         logger.error(f'Directory {path} does not exists! Error: {error}')
         print('Directory does not exists!')
         raise
-    file.write(data)
-    file.close()
 
 
 def get_line_url_and_tag(line):
