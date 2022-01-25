@@ -56,8 +56,8 @@ def get_line_url_and_tag(line):
 
 def get_data(url, tag=None):
     try:
-        data = requests.get(url)
-        status = data.status_code
+        response = requests.get(url)
+        status = response.status_code
     except SSLError as ssl_error:
         logger.error(f'SSL error occurred: {ssl_error} with {url}!')
         print(f'SSL error occurred with {url}')
@@ -75,13 +75,12 @@ def get_data(url, tag=None):
         print('Responce code is not 200!', status)
         raise Exception
 
-    content = data.content
     if tag == 'img':
-        return content
+        return response.content
     elif tag == 'link' or tag == 'script':
-        return str(BeautifulSoup(content, 'html.parser'))
+        return response.text
     else:
-        return BeautifulSoup(content, 'html.parser')
+        return BeautifulSoup(response.text, 'html.parser')
 
 
 def is_any_resources(url, resources):
