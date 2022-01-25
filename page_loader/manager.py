@@ -79,8 +79,8 @@ def get_data(url, tag=None):
 
     if tag == 'img':
         return data.content
-    # elif tag == 'link' or tag == 'script':
-    #     return BeautifulSoup(data.text, 'html.parser').prettify()
+    elif tag == 'link' or tag == 'script':
+        return str(BeautifulSoup(data.text, 'html.parser'))
     else:
         return BeautifulSoup(data.text, 'html.parser')
 
