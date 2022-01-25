@@ -12,7 +12,10 @@ def main():
     parser = argparse.ArgumentParser(description='Page loader',
                                      conflict_handler='resolve')
     parser.add_argument('url')
-    parser.add_argument('path', type=pathlib.Path)
+    parser.add_argument('-o',
+                        '--output',
+                        default='current',
+                        type=pathlib.Path)
     args = parser.parse_args()
 
     try:
