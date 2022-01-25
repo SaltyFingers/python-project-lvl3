@@ -93,9 +93,9 @@ def is_any_resources(url, resources):
 def is_proper_to_download(url, line_url):
     main_host = urlparse(url).netloc
     line_url_host = urlparse(line_url).netloc
-    return (line_url and line_url != url and (
-            line_url_host in main_host) or
-            not line_url_host)
+    return (line_url and line_url != url
+            and (line_url_host in main_host)
+            or not line_url_host)
 
 
 def download_resources(url, data, path_to_files_dir):

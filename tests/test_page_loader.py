@@ -165,8 +165,7 @@ def test_wrong_url():
             assert error
             assert SystemExit(1)
         except SystemExit as s_exit:
-            assert (str(s_exit) ==
-                    'An error occured with \
+            assert (str(s_exit) == 'An error occured with \
                     https://page-loader-which-not-exist.hexlet.repl.co/')
 
 
