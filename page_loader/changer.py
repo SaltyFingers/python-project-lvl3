@@ -50,13 +50,12 @@ def make_main_name(url, is_main=False):
     return ''.join(name)
 
 
-def make_names(path, main_name):
-    path_to_main_file = os.path.join(path, main_name + '.html')
-    path_to_files_dir = os.path.join(path, main_name + '_files')
-    return path_to_main_file, path_to_files_dir
+def make_path(path, main_name, suffix):
+    return os.path.join(path, main_name + suffix)
 
 
 def make_new_line(line, tag, file_path):
+    print(type(line))
     link_from_tag = {
         'img': 'src',
         'script': 'src',

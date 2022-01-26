@@ -24,32 +24,6 @@ def test_mock():
         assert mock.call_count == 1
 
 
-def test_make_name_from_url():
-    assert make_main_name('https://ru.hexlet.io/courses'
-                          ) == 'ru-hexlet-io-courses.html'
-    assert make_main_name('https://ru.hexlet.io/courses',
-                          True) == 'ru-hexlet-io-courses'
-    assert make_main_name('some/image/right.here'
-                          ) == 'some-image-right.here'
-    assert make_main_name('some/image/right.here',
-                          True) == 'some-image-right'
-
-
-def test_make_absolute_url():
-    assert make_absolute_url('https://site.com/files',
-                             'https://site.com/files/images/img.jpeg'
-                             ) == 'https://site.com/files/images/img.jpeg'
-
-    assert make_absolute_url('https://site.com/files',
-                             'files/images/img.jpeg'
-                             ) == 'https://site.com/files/images/img.jpeg'
-
-
-def tets_remove_schema():
-    assert remove_schema('https://site.com') == 'site.com'
-    assert remove_schema('http://site.com') == 'site.com'
-    assert remove_schema('site.com') == 'site.com'
-
 
 def test_crete_dir_for_files():
     with tempfile.TemporaryDirectory() as tmp_dir:
