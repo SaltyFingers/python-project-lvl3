@@ -4,22 +4,20 @@ import bs4
 from bs4 import BeautifulSoup
 from page_loader.changer import (make_absolute_url, make_main_name,
                                  make_new_line, make_path, remove_schema)
+
+
+# Data to test function which changes links to paths in .html file
 ROOT_PATH = '/home/user/tmp/page-loader-hexlet-repl_files/'
-LINE_1 = BeautifulSoup(open('tests/fixtures/change_lines/line_1.html', 'rb'
-                            ).read(), 'html.parser')
-EXPECTED_1 = BeautifulSoup(open('tests/fixtures/change_lines/expected_1.html', 'rb'
-                                ).read(), 'html.parser')
+LINE_1 = 'tests/fixtures/change_lines/line_1.html'
+LINE_2 = 'tests/fixtures/change_lines/line_2.html'
+LINE_3 = 'tests/fixtures/change_lines/line_3.html'
+EXPECTED_1 = open('tests/fixtures/change_lines/expected_1.html', 'r').read()
+EXPECTED_2 = open('tests/fixtures/change_lines/expected_2.html', 'r').read()
+EXPECTED_3 = open('tests/fixtures/change_lines/expected_3.html', 'r').read()
 PATH_1 = os.path.join(ROOT_PATH, 'page-loader-hexlet-repl-co-assets-application.css')
-# LINK_2 = '/assets/professions/nodejs.png'
-# EXPECTED_2 = '''
-# page-loader-hexlet-repl_files/
-# page-loader-hexlet-repl-co-assets-professions-nodejs.png
-# '''
-# LINK_3 = '/script.js'
-# EXPECTED_3 = '''
-# page-loader-hexlet-repl_files/
-# page-loader-hexlet-repl-co-script.js
-# '''
+PATH_2 = os.path.join(ROOT_PATH, 'page-loader-hexlet-repl-co-assets-professions-nodejs.png')
+PATH_3 = os.path.join(ROOT_PATH, 'page-loader-hexlet-repl-co-script.js')
+# # # # #
 
 
 def test_make_name_from_url():
@@ -57,8 +55,10 @@ def test_make_names():
 
 @pytest.mark.parametrize('line, tag, file_path, expected' ,[
     (LINE_1, 'link', PATH_1, EXPECTED_1),
-    # (LINK_2, 'img', PATH, EXPECTED_2),
-    # (LINK_2, 'script', PATH, EXPECTED_2), 
-    ])
+    (LINE_2, 'img', PATH_2, EXPECTED_2),
+    (LINE_3, 'script', PATH_3, EXPECTED_3), ])
 def test_make_new_line(line, tag, file_path, expected):
-    assert str(make_new_line(line, tag, file_path)) == str(expected)
+    with open(line) as file:
+        soup = BeautifulSoup(file, 'html.parser')
+        res = soup.find(tag)
+        assert str(make_new_line(res, tag, file_path)) == expected

@@ -113,11 +113,6 @@ def test_download():
         assert os.path.isdir(path)
         assert len(os.listdir(path)) == 4
 
-        with open(html_path, 'r') as file:
-            new_data = file.read()
-            raw_data = open(RAW_HTML_FILE).read()
-            assert new_data != raw_data
-
 
 def test_no_permission_to_save_files():
     with tempfile.TemporaryDirectory() as tmp_dir:
