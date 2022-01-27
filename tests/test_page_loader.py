@@ -6,8 +6,6 @@ from unittest.mock import Mock
 
 import bs4
 import requests
-from page_loader.changer import (make_absolute_url, make_main_name,
-                                 remove_schema)
 from page_loader.loader import download, is_any_resources
 from page_loader.manager import create_dir_for_files, get_data, save_file
 
@@ -22,7 +20,6 @@ def test_mock():
         mock(download(url, tmp_dir))
 
         assert mock.call_count == 1
-
 
 
 def test_crete_dir_for_files():

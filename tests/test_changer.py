@@ -1,10 +1,9 @@
-import pytest
 import os
-import bs4
+
+import pytest
 from bs4 import BeautifulSoup
 from page_loader.changer import (make_absolute_url, make_main_name,
                                  make_new_line, make_path, remove_schema)
-
 
 # Data to test function which changes links to paths in .html file
 ROOT_PATH = '/home/user/tmp/page-loader-hexlet-repl_files/'
@@ -14,8 +13,11 @@ LINE_3 = 'tests/fixtures/change_lines/line_3.html'
 EXPECTED_1 = open('tests/fixtures/change_lines/expected_1.html', 'r').read()
 EXPECTED_2 = open('tests/fixtures/change_lines/expected_2.html', 'r').read()
 EXPECTED_3 = open('tests/fixtures/change_lines/expected_3.html', 'r').read()
-PATH_1 = os.path.join(ROOT_PATH, 'page-loader-hexlet-repl-co-assets-application.css')
-PATH_2 = os.path.join(ROOT_PATH, 'page-loader-hexlet-repl-co-assets-professions-nodejs.png')
+PATH_1 = (os.path.join(ROOT_PATH,
+          'page-loader-hexlet-repl-co-assets-application.css'))
+PATH_2 = (os.path.join(
+          ROOT_PATH,
+          'page-loader-hexlet-repl-co-assets-professions-nodejs.png'))
 PATH_3 = os.path.join(ROOT_PATH, 'page-loader-hexlet-repl-co-script.js')
 # # # # #
 
@@ -53,7 +55,8 @@ def test_make_names():
     EXPECTED = 'dir/dir/ru-hexlet-io-courses.html'
     assert make_path(PATH, MAIN_NAME, '.html') == EXPECTED
 
-@pytest.mark.parametrize('line, tag, file_path, expected' ,[
+
+@pytest.mark.parametrize('line, tag, file_path, expected', [
     (LINE_1, 'link', PATH_1, EXPECTED_1),
     (LINE_2, 'img', PATH_2, EXPECTED_2),
     (LINE_3, 'script', PATH_3, EXPECTED_3), ])
