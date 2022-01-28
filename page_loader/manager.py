@@ -82,6 +82,13 @@ def get_data(url, tag=None):
         return BeautifulSoup(response.content, 'html.parser')
 
 
+def is_directory_exists(path):
+    if not os.path.exists(path):
+        logger.error(f'Output directory {path} does not exist!')
+        print('Output directory does not exists!')
+        raise FileNotFoundError('Output directory does not exists!')
+
+
 def is_any_resources(url, resources):
     is_iner_res_bool_list = []
     for line in resources:
@@ -117,3 +124,14 @@ def download_resources(url, data, path_to_files_dir):
             line = make_new_line(line, tag, file_path)
         bar.next()
     bar.finish()
+
+
+def process_data(data, url, path_to_files_dir):
+    resources = data.find_all(['img', 'link', 'script'])
+    if is_any_resources(url, resources):
+        create_dir_for_files(path_to_files_dir)
+        print(f'Starting download resources into {path_to_files_dir}')
+        download_resources(url, data, path_to_files_dir)
+    else:
+        logger.info('No inner resources, saving file')
+    return data
