@@ -134,4 +134,4 @@ def process_data(data, url, path_to_files_dir):
         download_resources(url, data, path_to_files_dir)
     else:
         logger.info('No inner resources, saving file')
-    return data
+    return data.prettify()

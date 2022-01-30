@@ -6,7 +6,7 @@ import tempfile
 import bs4
 import requests
 from page_loader.manager import (create_dir_for_files, get_data,
-                                 is_any_resources, save_file)
+                                 is_any_resources, save_file, process_data)
 
 
 def test_crete_dir_for_files():
@@ -79,3 +79,15 @@ def test_download_image():
             content = img.read()
         assert content == data
         assert imghdr.what(path) == 'png'
+
+
+def test_process():
+    url = 'https://page-loader.hexlet.repl.co/'
+    path = 'page-loader-hexlet-repl_files'
+    raw_html = bs4.BeautifulSoup(open('tests/fixtures/raw_html.html',
+                                      'r').read(), 'html.parser')
+    expected_html = open('tests/fixtures/expected_html.html', 'r').read()
+
+    processed_html = process_data(raw_html, url, path)
+
+    assert processed_html == expected_html

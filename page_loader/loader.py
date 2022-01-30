@@ -20,7 +20,7 @@ def download(url, path):
     path_to_files_dir = make_path(path, main_page_name, '_files')
     processed_page_data = process_data(get_data(url), url, path_to_files_dir)
     logger.info(f'Saving {path_to_main_file}!')
-    save_file(path_to_main_file, 'w', processed_page_data.prettify())
+    save_file(path_to_main_file, 'w', processed_page_data)
     print(f'Page downloaded into {path_to_main_file}')
     logger.info(f'{url} successfully downloaded!')
     return str(path_to_main_file)
