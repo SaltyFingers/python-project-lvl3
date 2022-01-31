@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
 from progress.bar import Bar
-from requests.exceptions import HTTPError, SSLError
+from requests.exceptions import HTTPError, SSLError, ConnectionError
 
 from page_loader.changer import (make_absolute_url, make_main_name,
                                  make_new_line)
@@ -20,26 +20,25 @@ def create_dir_for_files(path):
         pass
     except PermissionError as error:
         logger.error(f'Permission error: {error}')
-        print('You don\'t have permission!')
-        raise
+        raise PermissionError('You don\'t have permission!')
+
     except OSError as e:
         logger.error(f'Another error occured: {e}')
-        print('Couldn\'t create a directory for files!')
-        raise
+        raise OSError('Couldn\'t create a directory for files!')
 
 
 def save_file(path, flag, data):
     try:
         with open(path, flag) as file:
             file.write(data)
+
     except PermissionError as error:
         logger.error(f'Permission error occured: {error}!')
-        print('You don\'t have permission!')
-        raise
+        raise PermissionError('You don\'t have permission!')
+
     except FileNotFoundError as error:
-        logger.error(f'Directory {path} does not exists! Error: {error}')
-        print('Directory does not exists!')
-        raise
+        logger.error(f'Can\'t save file {path}! Error: {error}')
+        raise FileNotFoundError(f'Can\'t save file {path}!')
 
 
 def get_line_url_and_tag(line):
@@ -59,20 +58,15 @@ def get_data(url, tag=None):
         status = response.status_code
     except SSLError as ssl_error:
         logger.error(f'SSL error occurred: {ssl_error} with {url}!')
-        print(f'SSL error occurred with {url}')
-        raise
+        raise SSLError(f'SSL error occurred with {url}')
+
     except HTTPError as http_error:
         logger.error(f'HTTP error occurred: {http_error} with {url}!')
-        print(f'HTTP error occurred with {url}')
-        raise
-    except Exception as error:
-        logger.error(f'An error occurred: {error} with {url}!')
-        print(f'An error occurred with {url}')
-        raise
+        raise HTTPError(f'HTTP error occurred with {url}')
+
     if status != 200:
-        logger.error(f'{url} - Status code is not 200, it\'s {status}!')
-        print('Responce code is not 200!', status)
-        raise Exception
+        logger.error(f'{url} - Status code is not 200! It\'s {status}!')
+        raise ConnectionError(f'Responce code is not 200! It\'s: {status}')
 
     if tag == 'img':
         return response.content
@@ -85,7 +79,6 @@ def get_data(url, tag=None):
 def is_directory_exists(path):
     if not os.path.exists(path):
         logger.error(f'Output directory {path} does not exist!')
-        print('Output directory does not exists!')
         raise FileNotFoundError('Output directory does not exists!')
 
 

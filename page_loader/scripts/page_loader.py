@@ -18,7 +18,8 @@ def main():
 
     try:
         download(args.url, args.output)
-    except Exception:
+    except Exception as e:
+        print(str(e))
         sys.exit(1)
     sys.exit(0)
 
