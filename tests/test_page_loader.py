@@ -24,10 +24,11 @@ page-loader-hexlet-repl-co-assets-professions-nodejs.png')
 COURSES_FILE = FILES_PATH + 'page-loader-hexlet-repl-co-courses.html'
 JS_FILE = FILES_PATH + 'page-loader-hexlet-repl-co-script.js'
 
+
 def test_mock_download():
     with tempfile.TemporaryDirectory() as tmp_dir:
         with requests_mock.Mocker() as mock:
-            
+
             mock.get(URL,
                      text=open(RAW_HTML_FILE, 'r').read())
             mock.get(CSS_URL,
