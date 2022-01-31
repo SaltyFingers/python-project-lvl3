@@ -83,11 +83,13 @@ def test_download_image():
 
 def test_process():
     url = 'https://page-loader.hexlet.repl.co/'
-    path = 'page-loader-hexlet-repl_files'
+    dir = '/page-loader-hexlet-repl_files'
     raw_html = bs4.BeautifulSoup(open('tests/fixtures/raw_html.html',
                                       'r').read(), 'html.parser')
     expected_html = open('tests/fixtures/expected_html.html', 'r').read()
 
-    processed_html = process_data(raw_html, url, path)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        path = tmp_dir + dir
+        processed_html = process_data(raw_html, url, path)
 
     assert processed_html == expected_html
