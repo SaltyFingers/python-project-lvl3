@@ -4,7 +4,8 @@ from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
 from progress.bar import Bar
-from requests.exceptions import HTTPError, SSLError, ConnectionError
+from requests.exceptions import (ConnectionError, ConnectTimeout, HTTPError,
+                                 SSLError)
 
 from page_loader.changer import (make_absolute_url, make_main_name,
                                  make_new_line)
@@ -64,6 +65,10 @@ def get_data(url, tag=None):
         logger.error(f'HTTP error occurred: {http_error} with {url}!')
         raise HTTPError(f'HTTP error occurred with {url}')
 
+    except ConnectTimeout as error:
+        logger.error(f'{url} connection timeout: {error}')
+        raise ConnectTimeout('Connection Timeout!')
+
     if status != 200:
         logger.error(f'{url} - Status code is not 200! It\'s {status}!')
         raise ConnectionError(f'Responce code is not 200! It\'s: {status}')
@@ -76,7 +81,7 @@ def get_data(url, tag=None):
         return BeautifulSoup(response.content, 'html.parser')
 
 
-def is_directory_exists(path):
+def check_output_dir(path):
     if not os.path.exists(path):
         logger.error(f'Output directory {path} does not exist!')
         raise FileNotFoundError('Output directory does not exists!')

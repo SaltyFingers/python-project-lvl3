@@ -2,17 +2,15 @@ import os
 
 from page_loader.changer import make_main_name, make_path
 from page_loader.logger import get_logger
-from page_loader.manager import (get_data, is_directory_exists, process_data,
+from page_loader.manager import (get_data, check_output_dir, process_data,
                                  save_file)
 
 ROOT_DIR_PATH = os.getcwd()
 logger = get_logger(__name__)
 
 
-def download(url, path):
-    is_directory_exists(path)
-    if path == 'current':
-        path = ROOT_DIR_PATH
+def download(url, path=ROOT_DIR_PATH):
+    check_output_dir(path)
 
     logger.info(f'Start downloading {url} to {path}')
     main_page_name = make_main_name(url, is_main=True)

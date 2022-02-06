@@ -2,11 +2,17 @@ import imghdr
 import os
 import stat
 import tempfile
-
+import pytest
 import bs4
 import requests
 from page_loader.manager import (create_dir_for_files, get_data,
                                  is_any_resources, save_file, process_data)
+
+
+# @pytest.fixtures
+# def temporary_dir():
+#     with tempfile.TemporaryDirectory() as tmp_dir:
+#         return tmp_dir
 
 
 def test_crete_dir_for_files():
@@ -15,15 +21,10 @@ def test_crete_dir_for_files():
         create_dir_for_files(path)
         assert os.path.isdir(path)
 
-        try:
+        os.chmod(tmp_dir, stat.S_IRUSR)
+        with pytest.raises(PermissionError) as e:
             create_dir_for_files(path)
-        except FileExistsError:
-            assert FileExistsError
-        os.chmod(path, stat.S_IRUSR)
-        try:
-            create_dir_for_files(path)
-        except PermissionError:
-            assert PermissionError
+        assert str(e.value) == 'You don\'t have permission!'
 
 
 def test_get_data():
@@ -55,16 +56,16 @@ def test_save_file():
 def test_save_file_errors():
     with tempfile.TemporaryDirectory() as tmp_dir:
         path = os.path.join(tmp_dir, 'file_name')
-        try:
-            save_file('dir/lol/path_to_file', 'w+', 'some_data')
-        except FileNotFoundError:
-            assert FileNotFoundError
 
-        try:
-            os.chmod(tmp_dir, stat.S_IRUSR)
-            save_file(path, 'w+', 'some_data')
-        except PermissionError:
-            assert PermissionError
+        with pytest.raises(FileNotFoundError) as e:
+            save_file('dir/lol/path_to_file', 'w+', 'some_data')
+        assert str(e.value) == 'Can\'t save file dir/lol/path_to_file!'
+
+        os.chmod(tmp_dir, stat.S_IRUSR)
+
+        with pytest.raises(PermissionError) as e:
+            create_dir_for_files(path)
+        assert str(e.value) == 'You don\'t have permission!'
 
 
 def test_download_image():

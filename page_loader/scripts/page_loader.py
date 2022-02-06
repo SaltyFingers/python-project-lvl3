@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from page_loader.loader import download
+from page_loader.loader import download, ROOT_DIR_PATH
 from page_loader.logger import get_logger
 
 logger = get_logger(__name__)
@@ -13,7 +13,7 @@ def main():
     parser.add_argument('-o',
                         '--output',
                         help='output folder',
-                        default='current')
+                        default=ROOT_DIR_PATH)
     args = parser.parse_args()
 
     try:

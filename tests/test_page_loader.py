@@ -1,9 +1,11 @@
-from http import HTTPStatus
 import os
 import stat
 import tempfile
-import requests_mock
+from http import HTTPStatus
 
+import pytest
+from requests.exceptions import ConnectTimeout, ConnectionError
+import requests_mock
 from page_loader.loader import download
 
 TOTAL_FILES = 4
@@ -52,25 +54,24 @@ def test_mock_download():
 
 
 def test_mock_dir_not_exists():
-    with tempfile.TemporaryDirectory() as tmp_file:
-        path = os.path.join(tmp_file, '/nope')
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        path = os.path.join(tmp_dir, '/nope')
         with requests_mock.Mocker() as mock:
             mock.get(URL)
-            try:
+            with pytest.raises(FileNotFoundError) as e:
                 download(URL, path)
-            except FileNotFoundError:
-                assert FileNotFoundError
+            assert str(e.value) == 'Output directory does not exists!'
+            assert not os.listdir(tmp_dir)
 
 
 def test_mock_wrong_url():
     with tempfile.TemporaryDirectory() as tmp_dir:
         with requests_mock.Mocker() as mock:
             mock.get(URL, status_code=HTTPStatus.NOT_FOUND)
-            try:
+            with pytest.raises(Exception) as e:
                 download(URL, tmp_dir)
-            except Exception:
-                assert Exception
-                assert not os.listdir(tmp_dir)
+            assert str(e.value) == 'Responce code is not 200! It\'s: 404'
+            assert not os.listdir(tmp_dir)
 
 
 def test_mock_no_permission():
@@ -78,8 +79,27 @@ def test_mock_no_permission():
         os.chmod(tmp_dir, stat.S_IRUSR)
         with requests_mock.Mocker() as mock:
             mock.get(URL)
-            try:
+            with pytest.raises(PermissionError) as e:
                 download(URL, tmp_dir)
-            except PermissionError:
-                assert PermissionError
-                assert SystemExit
+            assert str(e.value) == 'You don\'t have permission!'
+            assert not os.listdir(tmp_dir)
+
+
+def test_mock_code_500():
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        with requests_mock.Mocker() as mock:
+            mock.get(URL, status_code=500)
+            with pytest.raises(ConnectionError) as e:
+                download(URL, tmp_dir)
+            assert str(e.value) == 'Responce code is not 200! It\'s: 500'
+            assert not os.listdir(tmp_dir)
+
+
+def test_mock_timeout():
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        with requests_mock.Mocker() as mock:
+            mock.get(URL, exc=ConnectTimeout)
+            with pytest.raises(ConnectTimeout) as e:
+                download(URL, tmp_dir)
+            assert str(e.value) == 'Connection Timeout!'
+            assert not os.listdir(tmp_dir)

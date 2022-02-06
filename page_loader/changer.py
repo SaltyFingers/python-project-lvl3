@@ -55,7 +55,6 @@ def make_path(path, main_name, suffix):
 
 
 def make_new_line(line, tag, file_path):
-    print(type(line))
     link_from_tag = {
         'img': 'src',
         'script': 'src',
