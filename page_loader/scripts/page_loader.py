@@ -1,7 +1,10 @@
 import argparse
 import sys
 
-from page_loader.loader import download, ROOT_DIR_PATH
+from requests.exceptions import (ConnectionError, ConnectTimeout, HTTPError,
+                                 SSLError)
+
+from page_loader.loader import ROOT_DIR_PATH, download
 from page_loader.logger import get_logger
 
 logger = get_logger(__name__)
@@ -18,8 +21,26 @@ def main():
 
     try:
         download(args.url, args.output)
-    except Exception as e:
-        print(str(e))
+    except FileNotFoundError:
+        print('Output or files directory does not exist! Can\'t save files!')
+        sys.exit(1)
+    except PermissionError:
+        print('You don\'t have permission!')
+        sys.exit(1)
+    except SSLError:
+        print('SSL error occurred!')
+        sys.exit(1)
+    except HTTPError:
+        print('HTTP error occurred!')
+        sys.exit(1)
+    except ConnectTimeout:
+        print('Connection timeout!')
+        sys.exit(1)
+    except ConnectionError:
+        print('Connection error occured!')
+        sys.exit(1)
+    except OSError:
+        print('Couldn\'t create a directory for files!')
         sys.exit(1)
     sys.exit(0)
 
