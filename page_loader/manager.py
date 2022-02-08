@@ -133,14 +133,3 @@ def download_resources(url, data, path_to_files_dir):
         bar.next()
     bar.finish()
     print('\n'.join(downloaded_resources))
-
-
-def process_data(data, url, path_to_files_dir):
-    resources = data.find_all(['img', 'link', 'script'])
-    if is_any_resources(url, resources):
-        create_dir_for_files(path_to_files_dir)
-        print(f'Starting download resources into {path_to_files_dir}')
-        download_resources(url, data, path_to_files_dir)
-    else:
-        logger.info('No inner resources, saving file')
-    return data.prettify()
