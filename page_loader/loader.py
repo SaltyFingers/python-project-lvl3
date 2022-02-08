@@ -17,7 +17,6 @@ def download(url, path=ROOT_DIR_PATH):
     main_page_name = make_main_name(url, is_main=True)
     path_to_main_file = make_path(path, main_page_name, '.html')
     path_to_files_dir = make_path(path, main_page_name, '_files')
-    # processed_page_data = process_data(get_data(url), url, path_to_files_dir)
     page_data = get_data(url)
     resources = page_data.find_all(['img', 'link', 'script'])
     if is_any_resources(url, resources):
