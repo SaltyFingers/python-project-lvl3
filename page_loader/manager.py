@@ -112,24 +112,25 @@ def download_resources(url, data, path_to_files_dir):
             continue
         line_url, tag = get_line_url_and_tag(line)
         absolute_url = make_absolute_url(url, line_url)
-        if is_proper_to_download(url, line_url):
-            file_name = make_main_name(absolute_url)
-            file_path = os.path.join(path_to_files_dir, file_name)
-            logger.info(f'Downloading {absolute_url}')
-            try:
-                line_data = get_data(absolute_url, tag)
-                flag = 'wb' if isinstance(line_data, bytes) else 'w'
-                save_file(file_path, flag, line_data)
-            except Exception as e:
-                logger.warning(f'Can\'t download {absolute_url}, error: {e}')
-                print(f'Can\'t download {absolute_url}')
-                bar.next()
-                downloaded_resources.append('- ' + absolute_url)
-                continue
-            else:
-                logger.info('File successfully downloaded!')
-                line = make_new_line(line, tag, file_path)
-                downloaded_resources.append('+ ' + absolute_url)
+        if not is_proper_to_download(url, line_url):
+            continue
+        file_name = make_main_name(absolute_url)
+        file_path = os.path.join(path_to_files_dir, file_name)
+        logger.info(f'Downloading {absolute_url}')
+        try:
+            line_data = get_data(absolute_url, tag)
+            flag = 'wb' if isinstance(line_data, bytes) else 'w'
+            save_file(file_path, flag, line_data)
+        except Exception as e:
+            logger.warning(f'Can\'t download {absolute_url}, error: {e}')
+            print(f'Can\'t download {absolute_url}')
+            bar.next()
+            downloaded_resources.append('- ' + absolute_url)
+            continue
+        else:
+            logger.info('File successfully downloaded!')
+            line = make_new_line(line, tag, file_path)
+            downloaded_resources.append('+ ' + absolute_url)
         bar.next()
     bar.finish()
     print('\n'.join(downloaded_resources))
