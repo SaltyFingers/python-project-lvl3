@@ -43,9 +43,9 @@ def test_mock_download(tmp_dir, **kwargs):
     mock.get(CSS_URL,
              text=open(CSS_FILE, 'r').read())
     mock.get(COURSES_URL,
-             content=open(PNG_FILE, 'rb').read())
-    mock.get(PNG_URL,
              text=open(COURSES_FILE, 'r').read())
+    mock.get(PNG_URL,
+             content=open(PNG_FILE, 'rb').read())
     mock.get(JS_URL,
              text=open(JS_FILE, 'r').read())
 

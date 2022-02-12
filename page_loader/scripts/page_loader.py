@@ -19,6 +19,7 @@ def main():
                         default=ROOT_DIR_PATH)
     args = parser.parse_args()
 
+    print(f'Starting download resources into {args.output}')
     try:
         download(args.url, args.output)
     except FileNotFoundError:
@@ -42,6 +43,10 @@ def main():
     except OSError:
         print('Couldn\'t create a directory for files!')
         sys.exit(1)
+    except Exception:
+        print('Unexpexted error occured!')
+        sys.exit(1)
+    print(f'{args.url} successfully downloaded to {args.output}!')
     sys.exit(0)
 
 

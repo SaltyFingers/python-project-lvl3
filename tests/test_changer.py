@@ -2,8 +2,9 @@ import os
 
 import pytest
 from bs4 import BeautifulSoup
-from page_loader.changer import (make_absolute_url, make_main_name,
-                                 make_new_line, make_path, remove_schema)
+from page_loader.changer import make_new_line
+from page_loader.namer import (make_absolute_url, make_name, make_path,
+                               remove_schema)
 
 # Data to test function which changes links to paths in .html file
 ROOT_PATH = '/home/user/tmp/page-loader-hexlet-repl_files/'
@@ -23,14 +24,14 @@ PATH_3 = os.path.join(ROOT_PATH, 'page-loader-hexlet-repl-co-script.js')
 
 
 def test_make_name_from_url():
-    assert make_main_name('https://ru.hexlet.io/courses'
-                          ) == 'ru-hexlet-io-courses.html'
-    assert make_main_name('https://ru.hexlet.io/courses',
-                          True) == 'ru-hexlet-io-courses'
-    assert make_main_name('some/image/right.here'
-                          ) == 'some-image-right.here'
-    assert make_main_name('some/image/right.here',
-                          True) == 'some-image-right'
+    assert make_name('https://ru.hexlet.io/courses'
+                     ) == 'ru-hexlet-io-courses.html'
+    assert make_name('https://ru.hexlet.io/courses',
+                     True) == 'ru-hexlet-io-courses'
+    assert make_name('some/image/right.here'
+                     ) == 'some-image-right.here'
+    assert make_name('some/image/right.here',
+                     True) == 'some-image-right'
 
 
 def test_make_absolute_url():

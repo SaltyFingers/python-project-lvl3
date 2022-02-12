@@ -7,39 +7,12 @@ from progress.bar import Bar
 from requests.exceptions import (ConnectionError, ConnectTimeout, HTTPError,
                                  SSLError)
 
-from page_loader.changer import (make_absolute_url, make_main_name,
-                                 make_new_line)
+from page_loader.changer import make_new_line
+from page_loader.files_manager import save_file
 from page_loader.logger import get_logger
+from page_loader.namer import make_absolute_url, make_name
 
 logger = get_logger(__name__)
-
-
-def create_dir_for_files(path):
-    try:
-        os.mkdir(path)
-    except FileExistsError:
-        pass
-    except PermissionError as error:
-        logger.error(f'Permission error: {error}')
-        raise PermissionError('You don\'t have permission!')
-
-    except OSError as e:
-        logger.error(f'Another error occured: {e}')
-        raise OSError('Couldn\'t create a directory for files!')
-
-
-def save_file(path, flag, data):
-    try:
-        with open(path, flag) as file:
-            file.write(data)
-
-    except PermissionError as error:
-        logger.error(f'Permission error occured: {error}!')
-        raise PermissionError('You don\'t have permission!')
-
-    except FileNotFoundError as error:
-        logger.error(f'Can\'t save file {path}! Error: {error}')
-        raise FileNotFoundError(f'Can\'t save file {path}!')
 
 
 def get_line_url_and_tag(line):
@@ -53,7 +26,7 @@ def get_line_url_and_tag(line):
         return None
 
 
-def get_data(url, tag=None):
+def get_data(url):
     try:
         response = requests.get(url)
         status = response.status_code
@@ -72,19 +45,14 @@ def get_data(url, tag=None):
     if status != 200:
         logger.error(f'{url} - Status code is not 200! It\'s {status}!')
         raise ConnectionError(f'Responce code is not 200! It\'s: {status}')
+    return response
 
-    if tag == 'img':
-        return response.content
-    elif tag == 'link' or tag == 'script':
-        return response.content
+
+def parse_data(data, tag=None):
+    if tag:
+        return data.content
     else:
-        return BeautifulSoup(response.content, 'html.parser')
-
-
-def check_output_dir(path):
-    if not os.path.exists(path):
-        logger.error(f'Output directory {path} does not exist!')
-        raise FileNotFoundError('Output directory does not exists!')
+        return BeautifulSoup(data.content, 'html.parser')
 
 
 def is_any_resources(url, resources):
@@ -114,13 +82,13 @@ def download_resources(url, data, path_to_files_dir):
         absolute_url = make_absolute_url(url, line_url)
         if not is_proper_to_download(url, line_url):
             continue
-        file_name = make_main_name(absolute_url)
+        file_name = make_name(absolute_url)
         file_path = os.path.join(path_to_files_dir, file_name)
         logger.info(f'Downloading {absolute_url}')
         try:
-            line_data = get_data(absolute_url, tag)
-            flag = 'wb' if isinstance(line_data, bytes) else 'w'
-            save_file(file_path, flag, line_data)
+            line_data = get_data(absolute_url)
+            parsed_line_data = parse_data(line_data, tag)
+            save_file(file_path, parsed_line_data)
         except Exception as e:
             logger.warning(f'Can\'t download {absolute_url}, error: {e}')
             print(f'Can\'t download {absolute_url}')
