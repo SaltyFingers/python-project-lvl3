@@ -22,16 +22,21 @@ PATH_2 = (os.path.join(
 PATH_3 = os.path.join(ROOT_PATH, 'page-loader-hexlet-repl-co-script.js')
 # # # # #
 
+MAIN_URL = 'https://page-loader.hexlet.repl.co'
+EXPECTED_FILE_NAME = 'page-loader-hexlet-repl.co.html'
+EXPECTED_DIR_NAME = 'page-loader-hexlet-repl-co_files'
+
+PAGE_URL = 'https://page-loader.hexlet.repl.co/courses'
+EXPECTED_HTML_NAME = 'page-loader-hexlet-repl-co-courses.html'
+
+PNG_URL = 'https://page-loader.hexlet.repl.co/assets/professions/nodejs.png'
+EXPECTED_PNG_NAME = 'page-loader-hexlet-repl-co-assets-professions-nodejs.png'
 
 def test_make_name_from_url():
-    assert make_name('https://ru.hexlet.io/courses'
-                     ) == 'ru-hexlet-io-courses.html'
-    assert make_name('https://ru.hexlet.io/courses',
-                     True) == 'ru-hexlet-io-courses'
-    assert make_name('some/image/right.here'
-                     ) == 'some-image-right.here'
-    assert make_name('some/image/right.here',
-                     True) == 'some-image-right-here'
+    assert make_name(MAIN_URL, 'file') == EXPECTED_FILE_NAME
+    assert make_name(MAIN_URL, 'dir') == EXPECTED_DIR_NAME
+    assert make_name(PAGE_URL) == EXPECTED_HTML_NAME
+    assert make_name(PNG_URL) == EXPECTED_PNG_NAME
 
 
 def test_make_absolute_url():
@@ -51,10 +56,10 @@ def tets_remove_schema():
 
 
 def test_make_names():
-    PATH = 'dir/dir'
-    MAIN_NAME = 'ru-hexlet-io-courses'
-    EXPECTED = 'dir/dir/ru-hexlet-io-courses.html'
-    assert make_path(PATH, MAIN_NAME, '.html') == EXPECTED
+    PATH = 'dir/'
+    MAIN_NAME = 'ru-hexlet-io-courses.co.html'
+    EXPECTED = 'dir/ru-hexlet-io-courses.co.html'
+    assert make_path(PATH, MAIN_NAME) == EXPECTED
 
 
 @pytest.mark.parametrize('line, tag, file_path, expected', [
