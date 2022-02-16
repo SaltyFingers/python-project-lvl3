@@ -36,18 +36,16 @@ def replace_symbols_with_dashes(url):
 
 
 def make_name(url, purpose=None):
-    url = remove_excess_symbols(url)
+    url = remove_schema(remove_excess_symbols(url))
 
     if purpose == 'dir':
-        new_url = remove_schema(url)
         suffix = '_files'
     elif pathlib.PurePosixPath(url).suffix or purpose == 'file':
         suffix = pathlib.PurePosixPath(url).suffix
-        new_url = remove_schema(url)[:-len(suffix)]
+        url = url[:-len(suffix)]
     else:
         suffix = '.html'
-        new_url = remove_schema(url)
-    name = replace_symbols_with_dashes(new_url)
+    name = replace_symbols_with_dashes(url)
     name.append(suffix)
     if purpose == 'file':
         name.append('.html')
