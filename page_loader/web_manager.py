@@ -97,4 +97,3 @@ def download_resources(url, parsed_data, path_to_files_dir):
             string = change_path(string, resource_tag, file_path)
         bar.next()
     bar.finish()
-    print('why not?')

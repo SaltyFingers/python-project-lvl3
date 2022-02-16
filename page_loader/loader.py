@@ -32,4 +32,5 @@ def download(url, path=ROOT_DIR_PATH):
     logger.info(f'Saving {path_to_main_file}!')
     save_file(path_to_main_file, processed_page_data)
     logger.info(f'{url} successfully downloaded!')
+    print(path_to_main_file)
     return str(path_to_main_file)
