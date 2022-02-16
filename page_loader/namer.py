@@ -41,10 +41,10 @@ def make_name(url, purpose=None):
     if purpose == 'dir':
         new_url = remove_schema(url)
         suffix = '_files'
-    elif pathlib.PurePosixPath(url).suffix:
+    elif pathlib.PurePosixPath(url).suffix or purpose == 'file':
         suffix = pathlib.PurePosixPath(url).suffix
         new_url = remove_schema(url)[:-len(suffix)]
-    elif purpose != 'file':
+    else:
         suffix = '.html'
         new_url = remove_schema(url)
     name = replace_symbols_with_dashes(new_url)

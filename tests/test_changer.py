@@ -32,6 +32,7 @@ EXPECTED_HTML_NAME = 'page-loader-hexlet-repl-co-courses.html'
 PNG_URL = 'https://page-loader.hexlet.repl.co/assets/professions/nodejs.png'
 EXPECTED_PNG_NAME = 'page-loader-hexlet-repl-co-assets-professions-nodejs.png'
 
+
 def test_make_name_from_url():
     assert make_name(MAIN_URL, 'file') == EXPECTED_FILE_NAME
     assert make_name(MAIN_URL, 'dir') == EXPECTED_DIR_NAME
