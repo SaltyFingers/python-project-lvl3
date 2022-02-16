@@ -20,7 +20,6 @@ def main():
     args = parser.parse_args()
 
     try:
-        print(f'Starting download resources into {args.output}')
         download(args.url, args.output)
     except FileNotFoundError:
         print('Output or files directory does not exist! Can\'t save files!')
