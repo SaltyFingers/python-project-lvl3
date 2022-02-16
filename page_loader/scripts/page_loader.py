@@ -20,12 +20,12 @@ def main():
     args = parser.parse_args()
 
     try:
-        download(args.url, args.output)
+        path_to_file = download(args.url, args.output)
     except FileNotFoundError:
-        print('Output or files directory does not exist! Can\'t save files!')
+        print('Error occured! Output or files directory does not exist!')
         sys.exit(1)
     except PermissionError:
-        print('You don\'t have permission!')
+        print('Error occured! You don\'t have permission!')
         sys.exit(1)
     except SSLError:
         print('SSL error occurred!')
@@ -34,17 +34,18 @@ def main():
         print('HTTP error occurred!')
         sys.exit(1)
     except ConnectTimeout:
-        print('Connection timeout!')
+        print('Error occured! Connection timeout!')
         sys.exit(1)
     except ConnectionError:
         print('Connection error occured!')
         sys.exit(1)
     except OSError:
-        print('Couldn\'t create a directory for files!')
+        print('Error occured! Couldn\'t create a directory for files!')
         sys.exit(1)
     except Exception:
         print('Unexpexted error occured!')
         sys.exit(1)
+    print(f'Page was successfully downloaded into {path_to_file}')
     sys.exit(0)
 
 

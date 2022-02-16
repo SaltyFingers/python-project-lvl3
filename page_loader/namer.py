@@ -35,17 +35,19 @@ def replace_symbols_with_dashes(url):
     return name
 
 
-def make_name(url, only_name=False):
+def make_name(url, is_dir=False):
     url = remove_excess_symbols(url)
 
-    if pathlib.PurePosixPath(url).suffix:
+    if is_dir:
+        new_url = remove_schema(url)
+    elif pathlib.PurePosixPath(url).suffix:
         suffix = pathlib.PurePosixPath(url).suffix
         new_url = remove_schema(url)[:-len(suffix)]
     else:
         suffix = '.html'
         new_url = remove_schema(url)
     name = replace_symbols_with_dashes(new_url)
-    if not only_name:
+    if not is_dir:
         name.append(suffix)
     return ''.join(name)
 

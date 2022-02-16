@@ -31,7 +31,7 @@ def test_make_name_from_url():
     assert make_name('some/image/right.here'
                      ) == 'some-image-right.here'
     assert make_name('some/image/right.here',
-                     True) == 'some-image-right'
+                     True) == 'some-image-right-here'
 
 
 def test_make_absolute_url():

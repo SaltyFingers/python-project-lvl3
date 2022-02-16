@@ -15,9 +15,8 @@ def download(url, path=ROOT_DIR_PATH):
     check_output_dir(path)
 
     logger.info(f'Start downloading {url} to {path}')
-    original_page_name = make_name(url, only_name=True)
-    path_to_main_file = make_path(path, original_page_name, '.html')
-    path_to_files_dir = make_path(path, original_page_name, '_files')
+    path_to_main_file = make_path(path, make_name(url), '.html')
+    path_to_files_dir = make_path(path, make_name(url, is_dir=True), '_files')
     raw_data = get_data(url)
     parsed_data = parse_data(raw_data)
     resources = parsed_data.find_all(['img', 'link', 'script'])
@@ -32,5 +31,4 @@ def download(url, path=ROOT_DIR_PATH):
     logger.info(f'Saving {path_to_main_file}!')
     save_file(path_to_main_file, processed_page_data)
     logger.info(f'{url} successfully downloaded!')
-    print(path_to_main_file)
     return str(path_to_main_file)

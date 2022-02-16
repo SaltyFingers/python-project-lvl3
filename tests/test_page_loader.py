@@ -21,6 +21,7 @@ PNG_URL = URL + '/assets/professions/nodejs.png'
 JS_URL = URL + '/script.js'
 
 FILES_PATH = 'tests/fixtures/for_mocker/'
+HTML_FILE_NAME = 'page-loader-hexlet-repl.co.html'
 CSS_FILE = FILES_PATH + 'page-loader-hexlet-repl-co-assets-application.css'
 PNG_FILE = (FILES_PATH + '\
 page-loader-hexlet-repl-co-assets-professions-nodejs.png')
@@ -33,6 +34,16 @@ def tmp_dir():
     tmp_dir = tempfile.mkdtemp()
     yield tmp_dir
     shutil.rmtree(tmp_dir)
+
+
+@requests_mock.Mocker(kw='mock')
+def test_returned_path(tmp_dir, **kwargs):
+    expected_path = os.path.join(tmp_dir, HTML_FILE_NAME)
+    mock = kwargs['mock']
+    mock.get(URL,
+             text=open(RAW_HTML_FILE, 'r').read())
+
+    assert download(URL, tmp_dir) == expected_path
 
 
 @requests_mock.Mocker(kw='mock')
@@ -50,12 +61,12 @@ def test_mock_download(tmp_dir, **kwargs):
              text=open(JS_FILE, 'r').read())
 
     download(URL, tmp_dir)
-    html_path = os.path.join(tmp_dir, 'page-loader-hexlet-repl.html')
+    html_path = os.path.join(tmp_dir, 'page-loader-hexlet-repl.co.html')
     assert os.path.exists(html_path)
     html_content = open(html_path, 'r').read()
     expected_content = open(EXPECTED_HTML_FILE, 'r').read()
     assert html_content == expected_content
-    path = os.path.join(tmp_dir, 'page-loader-hexlet-repl_files')
+    path = os.path.join(tmp_dir, 'page-loader-hexlet-repl-co_files')
     assert os.path.isdir(path)
     assert len(os.listdir(path)) == TOTAL_FILES
 
