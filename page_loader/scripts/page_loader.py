@@ -20,6 +20,7 @@ def main():
     args = parser.parse_args()
 
     try:
+        # print(f'Starting download resources into {args.output}')
         download(args.url, args.output)
     except FileNotFoundError:
         print('Output or files directory does not exist! Can\'t save files!')
@@ -45,7 +46,7 @@ def main():
     except Exception:
         print('Unexpexted error occured!')
         sys.exit(1)
-    print(f'{args.url} successfully downloaded to {args.output}!')
+    # print(f'{args.url} successfully downloaded to {args.output}!')
     sys.exit(0)
 
 
