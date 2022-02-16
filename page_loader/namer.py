@@ -40,7 +40,8 @@ def make_name(url, purpose=None):
 
     if purpose == 'dir':
         suffix = '_files'
-    elif pathlib.PurePosixPath(url).suffix or purpose == 'file':
+    elif (pathlib.PurePosixPath(url).suffix
+          and purpose is None) or purpose == 'file':
         suffix = pathlib.PurePosixPath(url).suffix
         url = url[:-len(suffix)]
     else:
