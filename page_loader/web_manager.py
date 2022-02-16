@@ -7,7 +7,7 @@ from progress.bar import Bar
 from requests.exceptions import (ConnectionError, ConnectTimeout, HTTPError,
                                  SSLError)
 
-from page_loader.changer import make_new_line
+from page_loader.changer import change_path
 from page_loader.files_manager import save_file
 from page_loader.logger import get_logger
 from page_loader.namer import make_absolute_url, make_name
@@ -15,7 +15,7 @@ from page_loader.namer import make_absolute_url, make_name
 logger = get_logger(__name__)
 
 
-def get_line_url_and_tag(line):
+def get_resource_url_and_tag(line):
     if line.name == 'img':
         return line.get('src'), line.name
     elif line.name == 'link':
@@ -58,7 +58,7 @@ def parse_data(data, tag=None):
 def is_any_resources(url, resources):
     is_iner_res_bool_list = []
     for line in resources:
-        line_url = get_line_url_and_tag(line)[1]
+        line_url = get_resource_url_and_tag(line)[1]
         is_iner_res_bool_list.append(is_proper_to_download(url, line_url))
     return any(is_iner_res_bool_list)
 
@@ -71,24 +71,25 @@ def is_proper_to_download(url, line_url):
             or not line_url_host)
 
 
-def download_resources(url, data, path_to_files_dir):
+def download_resources(url, parsed_data, path_to_files_dir):
     downloaded_resources = []
     bar = Bar('Downloading resouces ',
-              max=len(data.find_all(['img', 'link', 'script'])))
-    for line in data.find_all(['img', 'link', 'script']):
-        if get_line_url_and_tag(line) is None:
+              max=len(parsed_data.find_all(['img', 'link', 'script'])))
+    for string in parsed_data.find_all(['img', 'link', 'script']):
+        if get_resource_url_and_tag(string) is None:
             continue
-        line_url, tag = get_line_url_and_tag(line)
-        absolute_url = make_absolute_url(url, line_url)
-        if not is_proper_to_download(url, line_url):
+        resource_url, resource_tag = get_resource_url_and_tag(string)
+        absolute_url = make_absolute_url(url, resource_url)
+        if not is_proper_to_download(url, resource_url):
             continue
         file_name = make_name(absolute_url)
         file_path = os.path.join(path_to_files_dir, file_name)
         logger.info(f'Downloading {absolute_url}')
         try:
-            line_data = get_data(absolute_url)
-            parsed_line_data = parse_data(line_data, tag)
-            save_file(file_path, parsed_line_data)
+            resource_content = get_data(absolute_url)
+            parsed_resource_content = parse_data(resource_content,
+                                                 resource_tag)
+            save_file(file_path, parsed_resource_content)
         except Exception as e:
             logger.warning(f'Can\'t download {absolute_url}, error: {e}')
             print(f'Can\'t download {absolute_url}')
@@ -97,7 +98,7 @@ def download_resources(url, data, path_to_files_dir):
             continue
         else:
             logger.info('File successfully downloaded!')
-            line = make_new_line(line, tag, file_path)
+            string = change_path(string, resource_tag, file_path)
             downloaded_resources.append('+ ' + absolute_url)
         bar.next()
     bar.finish()

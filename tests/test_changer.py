@@ -2,7 +2,7 @@ import os
 
 import pytest
 from bs4 import BeautifulSoup
-from page_loader.changer import make_new_line
+from page_loader.changer import change_path
 from page_loader.namer import (make_absolute_url, make_name, make_path,
                                remove_schema)
 
@@ -61,8 +61,8 @@ def test_make_names():
     (LINE_1, 'link', PATH_1, EXPECTED_1),
     (LINE_2, 'img', PATH_2, EXPECTED_2),
     (LINE_3, 'script', PATH_3, EXPECTED_3), ])
-def test_make_new_line(line, tag, file_path, expected):
+def test_change_path(line, tag, file_path, expected):
     with open(line) as file:
         soup = BeautifulSoup(file, 'html.parser')
         res = soup.find(tag)
-        assert str(make_new_line(res, tag, file_path)) == expected
+        assert str(change_path(res, tag, file_path)) == expected
