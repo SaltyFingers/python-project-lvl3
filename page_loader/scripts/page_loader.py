@@ -19,8 +19,8 @@ def main():
                         default=ROOT_DIR_PATH)
     args = parser.parse_args()
 
-    print(f'Starting download resources into {args.output}')
     try:
+        print(f'Starting download resources into {args.output}')
         download(args.url, args.output)
     except FileNotFoundError:
         print('Output or files directory does not exist! Can\'t save files!')

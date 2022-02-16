@@ -72,7 +72,6 @@ def is_proper_to_download(url, line_url):
 
 
 def download_resources(url, parsed_data, path_to_files_dir):
-    downloaded_resources = []
     bar = Bar('Downloading resouces ',
               max=len(parsed_data.find_all(['img', 'link', 'script'])))
     for string in parsed_data.find_all(['img', 'link', 'script']):
@@ -92,14 +91,10 @@ def download_resources(url, parsed_data, path_to_files_dir):
             save_file(file_path, parsed_resource_content)
         except Exception as e:
             logger.warning(f'Can\'t download {absolute_url}, error: {e}')
-            print(f'Can\'t download {absolute_url}')
             bar.next()
-            downloaded_resources.append('- ' + absolute_url)
             continue
         else:
             logger.info('File successfully downloaded!')
             string = change_path(string, resource_tag, file_path)
-            downloaded_resources.append('+ ' + absolute_url)
         bar.next()
     bar.finish()
-    print('\n'.join(downloaded_resources))
