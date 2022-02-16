@@ -93,7 +93,7 @@ def download_resources(url, parsed_data, path_to_files_dir):
             logger.warning(f'Can\'t download {absolute_url}, error: {e}')
             continue
         else:
-            logger.info('File successfully downloaded!')
+            logger.info(f'{absolute_url} successfully downloaded!')
             string = change_path(string, resource_tag, file_path)
         bar.next()
     bar.finish()
