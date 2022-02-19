@@ -1,4 +1,3 @@
-import os
 from urllib.parse import urlparse
 
 import requests
@@ -10,18 +9,18 @@ from requests.exceptions import (ConnectionError, ConnectTimeout, HTTPError,
 from page_loader.changer import change_path
 from page_loader.files_manager import save_file
 from page_loader.logger import get_logger
-from page_loader.namer import make_absolute_url, make_name
+from page_loader.namer import make_absolute_url, make_name, make_path
 
 logger = get_logger(__name__)
 
 
-def get_resource_url_and_tag(line):
-    if line.name == 'img':
-        return line.get('src'), line.name
-    elif line.name == 'link':
-        return line.get('href'), line.name
-    elif line.name == 'script' and line.get('src'):
-        return line.get('src'), line.name
+def get_resource_url_and_tag(string):
+    if string.name == 'img':
+        return string.get('src'), string.name
+    elif string.name == 'link':
+        return string.get('href'), string.name
+    elif string.name == 'script' and string.get('src'):
+        return string.get('src'), string.name
     else:
         return None
 
@@ -82,7 +81,7 @@ def download_resources(url, parsed_data, path_to_files_dir):
         if not is_proper_to_download(url, resource_url):
             continue
         file_name = make_name(absolute_url)
-        file_path = os.path.join(path_to_files_dir, file_name)
+        file_path = make_path(path_to_files_dir, file_name)
         logger.info(f'Downloading {absolute_url}')
         try:
             resource_content = get_data(absolute_url)

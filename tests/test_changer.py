@@ -1,4 +1,4 @@
-import os
+from pathlib import PurePath, PurePosixPath
 
 import pytest
 from bs4 import BeautifulSoup
@@ -14,14 +14,15 @@ LINE_3 = 'tests/fixtures/change_lines/line_3.html'
 EXPECTED_1 = open('tests/fixtures/change_lines/expected_1.html', 'r').read()
 EXPECTED_2 = open('tests/fixtures/change_lines/expected_2.html', 'r').read()
 EXPECTED_3 = open('tests/fixtures/change_lines/expected_3.html', 'r').read()
-PATH_1 = (os.path.join(ROOT_PATH,
+PATH_1 = (PurePath(ROOT_PATH,
           'page-loader-hexlet-repl-co-assets-application.css'))
-PATH_2 = (os.path.join(
-          ROOT_PATH,
+PATH_2 = (PurePath(ROOT_PATH,
           'page-loader-hexlet-repl-co-assets-professions-nodejs.png'))
-PATH_3 = os.path.join(ROOT_PATH, 'page-loader-hexlet-repl-co-script.js')
+PATH_3 = PurePath(ROOT_PATH, 'page-loader-hexlet-repl-co-script.js')
 # # # # #
 
+
+# Data to test function which makes name
 MAIN_URL = 'https://page-loader.hexlet.repl.co'
 EXPECTED_FILE_NAME = 'page-loader-hexlet-repl.co.html'
 EXPECTED_DIR_NAME = 'page-loader-hexlet-repl-co_files'
@@ -31,6 +32,7 @@ EXPECTED_HTML_NAME = 'page-loader-hexlet-repl-co-courses.html'
 
 PNG_URL = 'https://page-loader.hexlet.repl.co/assets/professions/nodejs.png'
 EXPECTED_PNG_NAME = 'page-loader-hexlet-repl-co-assets-professions-nodejs.png'
+# # # # #
 
 
 def test_make_name_from_url():
@@ -56,11 +58,11 @@ def tets_remove_schema():
     assert remove_schema('site.com') == 'site.com'
 
 
-def test_make_names():
+def test_make_path():
     PATH = 'dir/'
     MAIN_NAME = 'ru-hexlet-io-courses.co.html'
     EXPECTED = 'dir/ru-hexlet-io-courses.co.html'
-    assert make_path(PATH, MAIN_NAME) == EXPECTED
+    assert make_path(PATH, MAIN_NAME) == PurePosixPath(EXPECTED)
 
 
 @pytest.mark.parametrize('line, tag, file_path, expected', [

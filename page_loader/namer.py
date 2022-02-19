@@ -1,11 +1,10 @@
-import pathlib
-from urllib.parse import urlparse, urlsplit, urljoin
-import os
+from pathlib import PurePath, PurePosixPath
+from urllib.parse import urljoin, urlparse, urlsplit
 
 
 def remove_schema(url):
     parsed_url = urlparse(url)
-    return  parsed_url.netloc + parsed_url.path
+    return parsed_url.netloc + parsed_url.path
 
 
 def make_absolute_url(main_url, url):
@@ -37,26 +36,26 @@ def make_name(url, purpose=None):
     new_url = remove_schema(remove_excess_symbols(url))
     if purpose == 'directory':
         suffix = '_files'
-    
+
     elif purpose == 'output_file':
-        suffix = pathlib.PurePosixPath(new_url).suffix
+        suffix = PurePosixPath(new_url).suffix
         new_url = new_url[:-len(suffix)]
-    
-    elif pathlib.PurePosixPath(new_url).suffix and purpose is None:
-        suffix = pathlib.PurePosixPath(new_url).suffix
+
+    elif PurePosixPath(new_url).suffix and purpose is None:
+        suffix = PurePosixPath(new_url).suffix
         new_url = new_url[:-len(suffix)]
-    
+
     else:
         suffix = '.html'
-    
+
     name = replace_symbols_with_dashes(new_url)
     name.append(suffix)
-    
+
     if purpose == 'output_file':
         name.append('.html')
-    
+
     return ''.join(name)
 
 
 def make_path(path, name):
-    return os.path.join(path, name)
+    return PurePath(path, name)
