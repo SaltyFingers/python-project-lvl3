@@ -29,30 +29,29 @@ def replace_symbols_with_dashes(url):
             new_url.append('-')
         else:
             new_url.append(symbol)
-    return new_url
+    return ''.join(new_url)
 
 
 def make_name(url, purpose=None):
+    name = []
     new_url = remove_schema(remove_excess_symbols(url))
+
     if purpose == 'directory':
         suffix = '_files'
-
     elif purpose == 'output_file':
         suffix = PurePosixPath(new_url).suffix
         new_url = new_url[:-len(suffix)]
-
     elif PurePosixPath(new_url).suffix and purpose is None:
         suffix = PurePosixPath(new_url).suffix
         new_url = new_url[:-len(suffix)]
-
     else:
-        suffix = '.html_test1'
+        suffix = '.html'
 
-    name = replace_symbols_with_dashes(new_url)
+    name.append(replace_symbols_with_dashes(new_url))
     name.append(suffix)
 
     if purpose == 'output_file':
-        name.append('.html_test2')
+        name.append('.html')
 
     return ''.join(name)
 
