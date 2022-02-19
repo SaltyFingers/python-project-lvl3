@@ -2,6 +2,7 @@ from pathlib import PurePath, PurePosixPath
 from urllib.parse import urljoin, urlparse, urlsplit
 import os
 
+
 def remove_schema(url):
     parsed_url = urlparse(url)
     return parsed_url.netloc + parsed_url.path
