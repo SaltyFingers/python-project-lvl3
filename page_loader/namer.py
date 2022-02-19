@@ -4,21 +4,15 @@ import os
 
 
 def remove_schema(url):
-    # parsed_url = urlparse(url)
-    # scheme = '%s://' % parsed_url.scheme
-    # return parsed_url.geturl().replace(scheme, '', 1)
     parsed_url = urlparse(url)
-    return parsed_url.netloc + parsed_url.path
+    return  parsed_url.netloc + parsed_url.path
 
 
 def make_absolute_url(main_url, url):
     split_main_url = urlsplit(main_url)
     split_url = urlsplit(url)
-    base = split_main_url.scheme + '://' + split_main_url.netloc
-    print(base)
-    # absolute_url = split_url._replace(scheme=split_main_url.scheme,
-    #                                   netloc=split_main_url.netloc)
-    return urljoin(base, split_url.path)
+    base_url = split_main_url.scheme + '://' + split_main_url.netloc
+    return urljoin(base_url, split_url.path)
 
 
 def remove_excess_symbols(url):
@@ -30,29 +24,37 @@ def remove_excess_symbols(url):
 
 
 def replace_symbols_with_dashes(url):
-    name = []
-    for s in url:
-        if not s.isalnum():
-            name.append('-')
+    new_url = []
+    for symbol in url:
+        if not symbol.isalnum():
+            new_url.append('-')
         else:
-            name.append(s)
-    return name
+            new_url.append(symbol)
+    return new_url
 
 
 def make_name(url, purpose=None):
-    url = remove_schema(remove_excess_symbols(url))
-    if purpose == 'dir':
+    new_url = remove_schema(remove_excess_symbols(url))
+    if purpose == 'directory':
         suffix = '_files'
-    elif (pathlib.PurePosixPath(url).suffix
-          and purpose is None) or purpose == 'file':
-        suffix = pathlib.PurePosixPath(url).suffix
-        url = url[:-len(suffix)]
+    
+    elif purpose == 'output_file':
+        suffix = pathlib.PurePosixPath(new_url).suffix
+        new_url = new_url[:-len(suffix)]
+    
+    elif pathlib.PurePosixPath(new_url).suffix and purpose is None:
+        suffix = pathlib.PurePosixPath(new_url).suffix
+        new_url = new_url[:-len(suffix)]
+    
     else:
         suffix = '.html'
-    name = replace_symbols_with_dashes(url)
+    
+    name = replace_symbols_with_dashes(new_url)
     name.append(suffix)
-    if purpose == 'file':
+    
+    if purpose == 'output_file':
         name.append('.html')
+    
     return ''.join(name)
 
 

@@ -34,8 +34,8 @@ EXPECTED_PNG_NAME = 'page-loader-hexlet-repl-co-assets-professions-nodejs.png'
 
 
 def test_make_name_from_url():
-    assert make_name(MAIN_URL, 'file') == EXPECTED_FILE_NAME
-    assert make_name(MAIN_URL, 'dir') == EXPECTED_DIR_NAME
+    assert make_name(MAIN_URL, 'output_file') == EXPECTED_FILE_NAME
+    assert make_name(MAIN_URL, 'directory') == EXPECTED_DIR_NAME
     assert make_name(PAGE_URL) == EXPECTED_HTML_NAME
     assert make_name(PNG_URL) == EXPECTED_PNG_NAME
 

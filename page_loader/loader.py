@@ -15,8 +15,8 @@ def download(url, path=ROOT_DIR_PATH):
     check_output_dir(path)
 
     logger.info(f'Start downloading {url} to {path}')
-    path_to_main_file = make_path(path, make_name(url, purpose='file'))
-    path_to_files_dir = make_path(path, make_name(url, purpose='dir'))
+    path_to_main_file = make_path(path, make_name(url, purpose='output_file'))
+    path_to_files_dir = make_path(path, make_name(url, purpose='directory'))
     raw_data = get_data(url)
     parsed_data = parse_data(raw_data)
     resources = parsed_data.find_all(['img', 'link', 'script'])
