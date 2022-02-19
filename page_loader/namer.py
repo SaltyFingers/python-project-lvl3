@@ -46,13 +46,13 @@ def make_name(url, purpose=None):
         new_url = new_url[:-len(suffix)]
 
     else:
-        suffix = '.html'
+        suffix = '.html_test1'
 
     name = replace_symbols_with_dashes(new_url)
     name.append(suffix)
 
     if purpose == 'output_file':
-        name.append('.html')
+        name.append('.html_test2')
 
     return ''.join(name)
 
