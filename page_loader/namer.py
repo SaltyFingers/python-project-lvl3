@@ -1,6 +1,6 @@
 from pathlib import PurePath, PurePosixPath
 from urllib.parse import urljoin, urlparse, urlsplit
-
+import os
 
 def remove_schema(url):
     parsed_url = urlparse(url)
@@ -39,11 +39,13 @@ def make_name(url, purpose=None):
     if purpose == 'directory':
         suffix = '_files'
     elif purpose == 'output_file':
-        suffix = PurePosixPath(new_url).suffix
-        new_url = new_url[:-len(suffix)]
+        new_url, suffix = os.path.splitext(new_url)
+        # suffix = PurePosixPath(new_url).suffix
+        # new_url = new_url[:-len(suffix)]
     elif PurePosixPath(new_url).suffix and purpose is None:
-        suffix = PurePosixPath(new_url).suffix
-        new_url = new_url[:-len(suffix)]
+        new_url, suffix = os.path.splitext(new_url)
+        # suffix = PurePosixPath(new_url).suffix
+        # new_url = new_url[:-len(suffix)]
     else:
         suffix = '.html'
 
