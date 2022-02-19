@@ -4,14 +4,10 @@ import shutil
 import stat
 import tempfile
 
-import bs4
 import pytest
 import requests
 import requests_mock
 from page_loader.files_manager import create_dir_for_files, save_file
-from page_loader.web_manager import get_data, is_any_resources, parse_data
-
-RAW_HTML_FILE = 'tests/fixtures/raw_html.html'
 
 URL = 'https://page-loader.hexlet.repl.co'
 PNG_URL = URL + '/assets/professions/nodejs.png'
@@ -38,28 +34,6 @@ def test_crete_dir_for_files(tmp_dir):
         create_dir_for_files(path)
     assert str(e.value) == 'You don\'t have permission!'
     os.chmod(tmp_dir, stat.S_IRWXU)
-
-
-@requests_mock.Mocker(kw='mock')
-def test_get_and_parse_data(**kwargs):
-    mock = kwargs['mock']
-    mock.get(URL,
-             text=open(RAW_HTML_FILE, 'r').read())
-    mock.get(PNG_URL,
-             content=open(PNG_FILE, 'rb').read())
-    assert type(parse_data(get_data(
-                URL))) == bs4.BeautifulSoup
-    assert type(parse_data(get_data(
-                PNG_URL), 'img')) == bytes
-
-
-@requests_mock.Mocker(kw='mock')
-def test_is_any_resources(**kwargs):
-    mock = kwargs['mock']
-    mock.get(URL, text=open(RAW_HTML_FILE, 'r').read())
-    page_data = parse_data(get_data(URL))
-    resources = page_data.find_all(['img', 'link', 'script'])
-    assert is_any_resources(URL, resources) is True
 
 
 def test_save_file(tmp_dir):
