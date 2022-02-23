@@ -14,18 +14,18 @@ from page_loader.namer import make_absolute_url, make_name, make_path
 logger = get_logger(__name__)
 
 
-def get_resource_url_and_tag(string):
-    if string.name == 'img':
-        return string.get('src'), string.name
-    elif string.name == 'link':
-        return string.get('href'), string.name
-    elif string.name == 'script' and string.get('src'):
-        return string.get('src'), string.name
+def get_url_and_name_from_tag(tag_object):
+    if tag_object.name == 'img':
+        return tag_object.get('src'), tag_object.name
+    elif tag_object.name == 'link':
+        return tag_object.get('href'), tag_object.name
+    elif tag_object.name == 'script' and tag_object.get('src'):
+        return tag_object.get('src'), tag_object.name
     else:
         return None
 
 
-def get_data(url):
+def get_response(url):
     try:
         response = requests.get(url)
         status = response.status_code
@@ -57,7 +57,7 @@ def parse_data(data, tag=None):
 def is_any_resources(url, resources):
     is_iner_res_bool_list = []
     for line in resources:
-        line_url = get_resource_url_and_tag(line)[1]
+        line_url = get_url_and_name_from_tag(line)[1]
         is_iner_res_bool_list.append(is_proper_to_download(url, line_url))
     return any(is_iner_res_bool_list)
 
@@ -73,26 +73,30 @@ def is_proper_to_download(url, line_url):
 def download_resources(url, parsed_data, path_to_files_dir):
     resources = parsed_data.find_all(['img', 'link', 'script'])
     bar = Bar('Downloading resouces ', max=len(resources))
-    for string in resources:
-        if get_resource_url_and_tag(string) is None:
+    for resource_tag in resources:
+        if get_url_and_name_from_tag(resource_tag) is None:
             continue
-        resource_url, resource_tag = get_resource_url_and_tag(string)
-        absolute_url = make_absolute_url(url, resource_url)
-        if not is_proper_to_download(url, resource_url):
+        # поменять имена переменных ниже
+        tag_url, tag_name = get_url_and_name_from_tag(resource_tag)
+        # ------------------------------
+        absolute_url = make_absolute_url(url, tag_url)
+        if not is_proper_to_download(url, tag_url):
             continue
         file_name = make_name(absolute_url)
         file_path = make_path(path_to_files_dir, file_name)
         logger.info(f'Downloading {absolute_url}')
         try:
-            resource_content = get_data(absolute_url)
+            # поменять имена переменных ниже
+            resource_content = get_response(absolute_url)
             parsed_resource_content = parse_data(resource_content,
                                                  resource_tag)
+            # ------------------------------
             save_file(file_path, parsed_resource_content)
         except Exception as e:
             logger.warning(f'Can\'t download {absolute_url}, error: {e}')
             continue
         else:
             logger.info(f'{absolute_url} successfully downloaded!')
-            string = change_path(string, resource_tag, file_path)
+            change_path(resource_tag, tag_name, file_path)
         bar.next()
     bar.finish()

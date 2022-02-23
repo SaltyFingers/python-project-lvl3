@@ -4,7 +4,7 @@ from page_loader.files_manager import (check_output_dir, create_dir_for_files,
                                        save_file)
 from page_loader.logger import get_logger
 from page_loader.namer import make_name, make_path
-from page_loader.web_manager import (download_resources, get_data,
+from page_loader.web_manager import (download_resources, get_response,
                                      is_any_resources, parse_data)
 
 ROOT_DIR_PATH = os.getcwd()
@@ -17,7 +17,7 @@ def download(url, path=ROOT_DIR_PATH):
     logger.info(f'Start downloading {url} to {path}')
     path_to_main_file = make_path(path, make_name(url, purpose='output_file'))
     path_to_files_dir = make_path(path, make_name(url, purpose='directory'))
-    raw_data = get_data(url)
+    raw_data = get_response(url)
     parsed_data = parse_data(raw_data)
     resources = parsed_data.find_all(['img', 'link', 'script'])
     if is_any_resources(url, resources):
