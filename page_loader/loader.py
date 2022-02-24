@@ -3,9 +3,9 @@ import os
 from page_loader.files_manager import (check_output_dir, create_dir_for_files,
                                        save_file)
 from page_loader.logger import get_logger
-from page_loader.namer import make_name, make_path
+from page_loader.namer import make_base_name, make_path
 from page_loader.web_manager import (download_resources, get_response,
-                                     is_any_resources, parse_data)
+                                     is_any_resources, make_soup)
 
 ROOT_DIR_PATH = os.getcwd()
 logger = get_logger(__name__)
@@ -15,10 +15,12 @@ def download(url, path=ROOT_DIR_PATH):
     check_output_dir(path)
 
     logger.info(f'Start downloading {url} to {path}')
-    path_to_main_file = make_path(path, make_name(url, purpose='output_file'))
-    path_to_files_dir = make_path(path, make_name(url, purpose='directory'))
+    path_to_main_file = make_path(path, make_base_name(url,
+                                                       purpose='output_file'))
+    path_to_files_dir = make_path(path, make_base_name(url,
+                                                       purpose='directory'))
     raw_data = get_response(url)
-    parsed_data = parse_data(raw_data)
+    parsed_data = make_soup(raw_data)
     resources = parsed_data.find_all(['img', 'link', 'script'])
     if is_any_resources(url, resources):
         create_dir_for_files(path_to_files_dir)
