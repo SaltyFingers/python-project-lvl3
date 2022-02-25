@@ -1,7 +1,7 @@
 from pathlib import PurePosixPath
 
-from page_loader.namer import (make_absolute_url, make_base_name, make_name,
-                               make_path, remove_schema)
+from page_loader.namer import (make_absolute_url, make_dir_name,
+                               make_file_name, make_path, remove_schema)
 
 MAIN_URL = 'https://page-loader.hexlet.repl.co'
 EXPECTED_FILE_NAME = 'page-loader-hexlet-repl.co.html'
@@ -15,13 +15,13 @@ EXPECTED_PNG_NAME = 'page-loader-hexlet-repl-co-assets-professions-nodejs.png'
 
 
 def test_make_name():
-    assert make_name(PAGE_URL) == EXPECTED_HTML_NAME
-    assert make_name(PNG_URL) == EXPECTED_PNG_NAME
+    assert make_file_name(PAGE_URL) == EXPECTED_HTML_NAME
+    assert make_file_name(PNG_URL) == EXPECTED_PNG_NAME
+    assert make_file_name(MAIN_URL, True) == EXPECTED_FILE_NAME
 
 
 def test_make_base_name():
-    assert make_base_name(MAIN_URL, 'output_file') == EXPECTED_FILE_NAME
-    assert make_base_name(MAIN_URL, 'directory') == EXPECTED_DIR_NAME
+    assert make_dir_name(MAIN_URL) == EXPECTED_DIR_NAME
 
 
 def test_make_absolute_url():

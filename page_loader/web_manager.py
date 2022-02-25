@@ -8,7 +8,7 @@ from requests.exceptions import (ConnectionError, ConnectTimeout, HTTPError,
 from page_loader.changer import change_path
 from page_loader.files_manager import save_file
 from page_loader.logger import get_logger
-from page_loader.namer import make_absolute_url, make_name, make_path
+from page_loader.namer import make_absolute_url, make_file_name, make_path
 
 logger = get_logger(__name__)
 
@@ -51,41 +51,37 @@ def make_soup(response):
 
 
 def is_any_resources(url, resources):
-    is_iner_res_bool_list = []
-    for line in resources:
-        line_url = get_url_and_name_from_tag(line)[1]
-        is_iner_res_bool_list.append(is_proper_to_download(url, line_url))
-    return any(is_iner_res_bool_list)
+    res_list = []
+    for resource_tag in resources:
+        tag_url = get_url_and_name_from_tag(resource_tag)[1]
+        res_list.append(is_proper_to_download(url, tag_url))
+    return any(res_list)
 
 
-def is_proper_to_download(url, line_url):
-    main_host = urlparse(url).netloc
-    line_url_host = urlparse(line_url).netloc
-    return (line_url and line_url != url
-            and (line_url_host in main_host)
-            or not line_url_host)
+def is_proper_to_download(base_url, tag_url):
+    base_url_host = urlparse(base_url).netloc
+    tag_url_host = urlparse(tag_url).netloc
+    return (tag_url and tag_url != base_url
+            and (tag_url_host in base_url_host)
+            or not tag_url_host)
 
 
-def download_resources(url, parsed_data, path_to_files_dir):
+def download_resources(base_url, parsed_data, path_to_files_dir):
     resources = parsed_data.find_all(['img', 'link', 'script'])
     bar = Bar('Downloading resouces ', max=len(resources))
     for resource_tag in resources:
         if get_url_and_name_from_tag(resource_tag) is None:
             continue
         tag_url, tag_name = get_url_and_name_from_tag(resource_tag)
-        absolute_url = make_absolute_url(url, tag_url)
-        if not is_proper_to_download(url, tag_url):
+        absolute_url = make_absolute_url(base_url, tag_url)
+        if not is_proper_to_download(base_url, tag_url):
             continue
-        file_name = make_name(absolute_url)
+        file_name = make_file_name(absolute_url)
         file_path = make_path(path_to_files_dir, file_name)
         logger.info(f'Downloading {absolute_url}')
         try:
             resource_response = get_response(absolute_url)
-            if resource_tag:
-                resource_content = resource_response.content
-            else:
-                resource_content = make_soup(resource_response,
-                                             resource_tag)
+            resource_content = resource_response.content
             save_file(file_path, resource_content)
         except Exception as e:
             logger.warning(f'Can\'t download {absolute_url}, error: {e}')

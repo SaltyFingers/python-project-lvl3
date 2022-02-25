@@ -5,9 +5,9 @@ from page_loader.logger import get_logger
 logger = get_logger(__name__)
 
 
-def create_dir_for_files(path):
+def create_dir_for_files(path_to_files_dir):
     try:
-        os.mkdir(path)
+        os.mkdir(path_to_files_dir)
     except FileExistsError:
         pass
     except PermissionError as error:

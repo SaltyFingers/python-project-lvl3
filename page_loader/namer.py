@@ -1,6 +1,13 @@
 from pathlib import PurePath, PurePosixPath
-from urllib.parse import urljoin, urlparse, urlsplit
+from urllib.parse import urljoin, urlparse
 import os
+
+DIR_SUFFIX = '_files'
+HTML_SUFFIX = '.html'
+
+
+def make_path(path, name):
+    return PurePath(path, name)
 
 
 def remove_schema(url):
@@ -9,10 +16,7 @@ def remove_schema(url):
 
 
 def make_absolute_url(main_url, url):
-    split_main_url = urlsplit(main_url)
-    split_url = urlsplit(url)
-    base_url = split_main_url.scheme + '://' + split_main_url.netloc
-    return urljoin(base_url, split_url.path)
+    return urljoin(main_url, url)
 
 
 def remove_excess_symbols(url):
@@ -33,38 +37,22 @@ def replace_symbols_with_dashes(url):
     return ''.join(new_url)
 
 
-def make_base_name(url, purpose):
+def make_dir_name(url):
+    new_url = replace_symbols_with_dashes(remove_schema(
+                                          remove_excess_symbols(url)))
+    return new_url + DIR_SUFFIX
+
+
+def make_file_name(url, is_output_file=False):
     name = []
     new_url = remove_schema(remove_excess_symbols(url))
-
-    if purpose == 'directory':
-        suffix = '_files'
-    elif purpose == 'output_file':
-        new_url, suffix = os.path.splitext(new_url)
-
-    name.append(replace_symbols_with_dashes(new_url))
-    name.append(suffix)
-
-    if purpose == 'output_file':
-        name.append('.html')
-
-    return ''.join(name)
-
-
-def make_name(url):
-    name = []
-    new_url = remove_schema(remove_excess_symbols(url))
-
-    if PurePosixPath(new_url).suffix:
+    if is_output_file or (PurePosixPath(new_url).suffix and
+                          not is_output_file):
         new_url, suffix = os.path.splitext(new_url)
     else:
-        suffix = '.html'
-
+        suffix = HTML_SUFFIX
     name.append(replace_symbols_with_dashes(new_url))
     name.append(suffix)
-
+    if is_output_file:
+        name.append(HTML_SUFFIX)
     return ''.join(name)
-
-
-def make_path(path, name):
-    return PurePath(path, name)
