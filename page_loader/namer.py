@@ -46,8 +46,8 @@ def make_dir_name(url):
 def make_file_name(url, is_output_file=False):
     name = []
     new_url = remove_schema(remove_excess_symbols(url))
-    if is_output_file or (PurePosixPath(new_url).suffix and
-                          not is_output_file):
+    if is_output_file or (PurePosixPath(new_url).suffix
+                          and not is_output_file):
         new_url, suffix = os.path.splitext(new_url)
     else:
         suffix = HTML_SUFFIX
